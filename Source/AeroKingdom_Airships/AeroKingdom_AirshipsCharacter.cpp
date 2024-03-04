@@ -2,6 +2,7 @@
 
 #include "AeroKingdom_AirshipsCharacter.h"
 #include "AeroKingdom_AirshipsProjectile.h"
+#include "FirstCannon.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -73,6 +74,9 @@ void AAeroKingdom_AirshipsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAeroKingdom_AirshipsCharacter::Look);
+
+		// Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAeroKingdom_AirshipsCharacter::Interact);
 	}
 	else
 	{
@@ -104,6 +108,51 @@ void AAeroKingdom_AirshipsCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interact!"));
+	
+	FVector Start;
+	FVector End;
+
+	FVector PlayerEyesLoc;
+	FRotator PlayerEyesRot;
+
+	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
+
+	float LineTraceDistance = 200.f;
+
+	Start = PlayerEyesLoc;
+	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * LineTraceDistance);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("InteractTrace")), true, this);
+
+	FHitResult InteractHit = FHitResult(ForceInit);
+
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
+	if (bIsHit && InteractHit.GetActor() != this) {
+
+		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, InteractHit.GetActor()->GetClass()->GetName());
+
+		if (InteractHit.GetActor()->IsA(AFirstCannon::StaticClass())) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("AFirstCannon!"));
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
+
+			// see if the thing is already possessed
+				// Save controller
+				// unpossess current controller
+				// Disable state management on the possessed character
+				// Disable Movement
+				// Possess Character
+				// Enable Movement
+		}
+	}
+	else {
+		DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, ECC_WorldStatic, 1.0f);
 	}
 }
 

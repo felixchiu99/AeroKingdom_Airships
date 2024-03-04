@@ -36,7 +36,7 @@ AFirstCannon::AFirstCannon()
 		// mesh = valid path
 		CannonBaseMesh->SetStaticMesh(Cube.Object);
 		// set relative location of mesh
-		CannonBaseMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+		CannonBaseMesh->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.5f));
 		// set relative location of mesh
 		CannonBaseMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -50.f));
 	}
@@ -64,6 +64,7 @@ AFirstCannon::AFirstCannon()
 	EnterCapsuleComponent->InitCapsuleSize(44.f, 60.f);
 	EnterCapsuleComponent->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
 	EnterCapsuleComponent->SetupAttachment(CannonBase);
+	EnterCapsuleComponent->SetRelativeScale3D(FVector(2.0f, 2.0f, 1.0f));
 	EnterCapsuleComponent->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 
 	// Create a CameraComponent	
@@ -107,7 +108,11 @@ void AFirstCannon::Turn(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
+
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Some debug message!"));
+
+
+
 	}
 }
 
