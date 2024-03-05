@@ -6,6 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/ArrowComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
@@ -71,6 +72,19 @@ AFirstCannon::AFirstCannon()
 	}
 	CannonSupport->SetupAttachment(CannonStand);
 
+	/*
+	// Create a cannon Support for visualisation
+	CannonPivot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonPivot"));
+	CannonPivot->SetStaticMesh(Base.Object);
+	CannonPivot->SetupAttachment(CannonSupport);
+	CannonPivot->SetRelativeLocation(FVector(0.0f, 0.0f, 15.0f));
+	*/
+	/*
+	CannonPivot = CreateDefaultSubobject<UArrowComponent>(TEXT("Pivot"));
+	CannonPivot->SetupAttachment(CannonSupport);
+	CannonPivot->SetRelativeLocation(FVector(0.0f, 0.0f, 15.0f));
+	*/
+
 	// Create a cannon Support for visualisation
 	CannonCarrier = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonCarrier"));
 
@@ -97,12 +111,23 @@ AFirstCannon::AFirstCannon()
 		CannonBarrel->SetStaticMesh(Barrel.Object);
 	}
 
+	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
+	FirePoint->SetupAttachment(CannonBarrel);
+	FirePoint->SetRelativeLocation(FVector(370.0f, 0.0f, 0.0f));
+
+	/*
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(CannonCarrier);
-	FirstPersonCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 20.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = false;
+	FirstPersonCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 50.f)); // Position the camera
+	*/
+
+	// Create a CameraComponent	
+	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(CannonCarrier);
+	FirstPersonCameraComponent->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
+	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 }
 
 // Called when the game starts or when spawned
@@ -131,7 +156,15 @@ void AFirstCannon::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AFirstCannon::Interact);
+
+		// Fire
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &AFirstCannon::Fire);
 	}
+}
+
+void AFirstCannon::Fire(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Fire!"));
 }
 
 void AFirstCannon::Turn(const FInputActionValue& Value)
@@ -153,7 +186,6 @@ void AFirstCannon::Turn(const FInputActionValue& Value)
 			}
 			BaseRotation.Yaw = FMath::Clamp(BaseRotation.Yaw, CannonAzimuth.X, CannonAzimuth.Y);
 			CannonStand->SetRelativeRotation(BaseRotation);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, BaseRotation.ToString());
 		}
 		// Elevation (Up/Down)
 		if (MovementVector.Y != 0) {
@@ -174,6 +206,8 @@ void AFirstCannon::Turn(const FInputActionValue& Value)
 void AFirstCannon::Interact(const FInputActionValue& Value)
 {
 	/* Return to character */
-	UnPossess(GetController());
+	AController* controller = GetController();
+	if(controller)
+		UnPossess(controller);
 }
 

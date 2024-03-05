@@ -7,14 +7,18 @@
 
 void IInteractableInterface::Possess(APawn* PossessingChar)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, ( PossessingChar==nullptr ? "True" : "False"));
 	PossessedChar = PossessingChar;
 }
 
 void IInteractableInterface::UnPossess(AController* SavedController)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, (SavedController == nullptr ? "True" : "False"));
 	/* Unpossess current controller */
-	SavedController->UnPossess();
+	if (SavedController)
+		SavedController->UnPossess();
 
 	/* Possess Character */
-	SavedController->Possess(PossessedChar);
+	if(PossessedChar)
+		SavedController->Possess(PossessedChar);
 }

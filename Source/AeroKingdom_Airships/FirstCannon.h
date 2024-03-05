@@ -12,6 +12,7 @@ class UInputComponent;
 class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
+class UArrowComponent;
 class UCapsuleComponent;
 struct FInputActionValue;
 
@@ -34,6 +35,19 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* CannonBarrel;
+
+	///*
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UStaticMeshComponent* CannonPivot;
+	//*/
+
+	/*
+	UPROPERTY(VisibleDefaultsOnly)
+	UArrowComponent* CannonPivot;
+	*/
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UArrowComponent* FirePoint;
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UCapsuleComponent* EnterCapsuleComponent;
@@ -81,11 +95,11 @@ public:
 
 	/** FVector2D for Cannon Azimuth (Left/Right) Arc*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D CannonAzimuth = FVector2D(-45,45);
+	FVector2D CannonAzimuth = FVector2D(-50,50);
 
 	/** FVector2D for Cannon Elevation (Up/Down) Arc*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D CannonElevation = FVector2D(-10, 25);
+	FVector2D CannonElevation = FVector2D(-35, 35);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -99,4 +113,7 @@ protected:
 
 	/** Called for Interact input */
 	void Interact(const FInputActionValue& Value);
+
+	/** Called for Interact input */
+	void Fire(const FInputActionValue& Value);
 };
