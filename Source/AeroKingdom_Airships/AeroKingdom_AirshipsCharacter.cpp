@@ -134,21 +134,33 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 
 	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
 	if (bIsHit && InteractHit.GetActor() != this) {
-
-		DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, InteractHit.GetActor()->GetClass()->GetName());
-
-		if (InteractHit.GetActor()->IsA(AFirstCannon::StaticClass())) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("AFirstCannon!"));
+		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
 			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
 
-			// see if the thing is already possessed
-				// Save controller
-				// unpossess current controller
-				// Disable state management on the possessed character
-				// Disable Movement
-				// Possess Character
-				// Enable Movement
+			/* see if the thing is already possessed */
+			IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(InteractHit.GetActor());
+			APawn* PossessAbleObj = Cast<APawn>(InteractHit.GetActor());
+			if (InteractableObj && PossessAbleObj && !InteractableObj->bIsCurrentlyPossessed) {
+				/* Save controller */
+				if (!SavedController) {
+					SavedController = GetController();
+				}
+				/* unpossess current controller */
+				SavedController->UnPossess();
+				/* Disable state management on the possessed character */
+				/* Disable Movement */
+				//GetCharacterMovement()
+
+				/* Possess Character */
+				InteractableObj->Possess(this);
+				SavedController->Possess(PossessAbleObj);
+
+				/* Enable Movement */
+			}
+		}
+		else {
+			DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
 		}
 	}
 	else {

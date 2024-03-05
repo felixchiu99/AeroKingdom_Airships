@@ -61,6 +61,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
 	bool bHasRifle;
 
+	/* pointer to Saved Controller */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	AController* SavedController;
+
 	/** Setter to set the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	void SetHasRifle(bool bNewHasRifle);
