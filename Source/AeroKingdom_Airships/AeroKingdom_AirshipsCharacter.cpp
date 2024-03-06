@@ -113,8 +113,6 @@ void AAeroKingdom_AirshipsCharacter::Look(const FInputActionValue& Value)
 
 void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interact!"));
-	
 	FVector Start;
 	FVector End;
 
@@ -146,6 +144,7 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 				if (!SavedController) {
 					SavedController = GetController();
 				}
+
 				/* unpossess current controller */
 				SavedController->UnPossess();
 				/* Disable state management on the possessed character */

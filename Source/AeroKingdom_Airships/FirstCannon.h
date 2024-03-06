@@ -30,6 +30,9 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* CannonSupport;
 
+	UPROPERTY(EditAnywhere, Category = Mesh)
+	UStaticMeshComponent* CannonPivot;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* CannonCarrier;
 
@@ -43,7 +46,7 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 	UCapsuleComponent* EnterCapsuleComponent;
 
 	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
 	/** MappingContext */
@@ -108,6 +111,6 @@ protected:
 	/** Called for Interact input */
 	void Interact(const FInputActionValue& Value);
 
-	/** Called for Interact input */
+	/** Called for Fire input */
 	void Fire(const FInputActionValue& Value);
 };

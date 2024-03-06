@@ -25,7 +25,6 @@ AFirstCannon::AFirstCannon()
 	CannonBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBase"));
 	CannonBase->SetWorldRotation(FRotator(0.f, 0.f, 0.f));
 	CannonBase->SetupAttachment(GetRootComponent());
-
 	// set path for static mesh. Check path of mesh in content browser.
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Base(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_Base.5InchCannon_Base'"));
 	// check if path is valid. Check path of mesh in content browser.
@@ -34,15 +33,12 @@ AFirstCannon::AFirstCannon()
 		// mesh = valid path
 		CannonBase->SetStaticMesh(Base.Object);
 		// set relative location of mesh
-		//CannonBase->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.5f));
-		// set relative location of mesh
 		CannonBase->SetRelativeLocation(FVector(0.0f, 0.0f, -1.f));
 	}
 
 	// Create a cannon Stand for visualisation
 	CannonStand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonStand"));
 	CannonStand->SetupAttachment(CannonBase);
-
 	// set path for static mesh. Check path of mesh in content browser.
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Stand(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_Stand.5InchCannon_Stand'"));
 	// check if path is valid. Check path of mesh in content browser.
@@ -50,8 +46,6 @@ AFirstCannon::AFirstCannon()
 	{
 		// mesh = valid path
 		CannonStand->SetStaticMesh(Stand.Object);
-		// set relative location of mesh
-		//CannonStand->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.5f));
 		// set relative location of mesh
 		CannonStand->SetRelativeLocation(FVector(0.0f, 0.0f, 58.f));
 	}
@@ -66,15 +60,16 @@ AFirstCannon::AFirstCannon()
 		// mesh = valid path
 		CannonSupport->SetStaticMesh(Support.Object);
 		// set relative location of mesh
-		//CannonSupport->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.5f));
-		// set relative location of mesh
 		CannonSupport->SetRelativeLocation(FVector(0.0f, 0.0f, 80.0f));
 	}
 	CannonSupport->SetupAttachment(CannonStand);
 
+	// Create a cannon Pivot for cannon elevation (without changing the cannon)
+	CannonPivot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonPivot"));
+	CannonPivot->SetupAttachment(CannonSupport);
+
 	// Create a cannon Support for visualisation
 	CannonCarrier = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonCarrier"));
-
 	// set path for static mesh. Check path of mesh in content browser.
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Carrier(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_GunCarrier.5InchCannon_GunCarrier'"));
 	// check if path is valid. Check path of mesh in content browser.
@@ -83,12 +78,11 @@ AFirstCannon::AFirstCannon()
 		// mesh = valid path
 		CannonCarrier->SetStaticMesh(Carrier.Object);
 	}
-	CannonCarrier->SetupAttachment(CannonSupport);
+	CannonCarrier->SetupAttachment(CannonPivot);
 
 	// Create a cannon Support for visualisation
 	CannonBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBarrel"));
 	CannonBarrel->SetupAttachment(CannonCarrier);
-
 	// set path for static mesh. Check path of mesh in content browser.
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Barrel(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_Barrel.5InchCannon_Barrel'"));
 	// check if path is valid. Check path of mesh in content browser.
@@ -127,6 +121,13 @@ void AFirstCannon::Tick(float DeltaTime)
 void AFirstCannon::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (auto PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+	}
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -169,7 +170,7 @@ void AFirstCannon::Turn(const FInputActionValue& Value)
 		}
 		// Elevation (Up/Down)
 		if (MovementVector.Y != 0) {
-			FRotator BodyRotation = CannonCarrier->GetRelativeRotation();
+			FRotator BodyRotation = CannonPivot->GetRelativeRotation();
 			if (MovementVector.Y > 0) {
 				BodyRotation.Pitch -= fElevationSpeed;
 			}
@@ -178,7 +179,7 @@ void AFirstCannon::Turn(const FInputActionValue& Value)
 				BodyRotation.Pitch += fElevationSpeed;
 			}
 			BodyRotation.Pitch = FMath::Clamp(BodyRotation.Pitch, CannonElevation.X, CannonElevation.Y);
-			CannonCarrier->SetRelativeRotation(BodyRotation);
+			CannonPivot->SetRelativeRotation(BodyRotation);
 		}
 	}
 }
@@ -187,6 +188,13 @@ void AFirstCannon::Interact(const FInputActionValue& Value)
 {
 	/* Return to character */
 	AController* controller = GetController();
+	if (auto PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->RemoveMappingContext(DefaultMappingContext);
+		}
+	}
 	if(controller)
 		UnPossess(controller);
 }
