@@ -36,16 +36,6 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* CannonBarrel;
 
-	///*
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	UStaticMeshComponent* CannonPivot;
-	//*/
-
-	/*
-	UPROPERTY(VisibleDefaultsOnly)
-	UArrowComponent* CannonPivot;
-	*/
-
 	UPROPERTY(VisibleDefaultsOnly)
 	UArrowComponent* FirePoint;
 
@@ -86,20 +76,24 @@ public:
 	bool bHasPlayer;
 
 	/** float for cannon Azimuth Speed*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float fAzimuthSpeed = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	float fAzimuthSpeed = 0.7f;
 
 	/** float for cannon Elevation Speed*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
 	float fElevationSpeed = 0.5f;
 
+	/** bool for allowing limitless rotation*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	bool bLimitAzimuth = true;
+
 	/** FVector2D for Cannon Azimuth (Left/Right) Arc*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes", meta = (EditCondition = "bLimitAzimuth", EditConditionHides))
 	FVector2D CannonAzimuth = FVector2D(-50,50);
 
 	/** FVector2D for Cannon Elevation (Up/Down) Arc*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector2D CannonElevation = FVector2D(-35, 35);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	FVector2D CannonElevation = FVector2D(-20, 50);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
