@@ -14,6 +14,7 @@ class UInputAction;
 class UCameraComponent;
 class UArrowComponent;
 class UCapsuleComponent;
+class ACannon;
 struct FInputActionValue;
 
 UCLASS()
@@ -33,6 +34,7 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 	UPROPERTY(EditAnywhere, Category = Mesh)
 	UStaticMeshComponent* CannonPivot;
 
+	/*
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* CannonCarrier;
 
@@ -41,6 +43,7 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UArrowComponent* FirePoint;
+	*/
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UCapsuleComponent* EnterCapsuleComponent;
@@ -64,6 +67,13 @@ class AEROKINGDOM_AIRSHIPS_API AFirstCannon : public APawn, public IInteractable
 	/** Interact Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ChildActorComponent, meta = (OnlyPlaceable, AllowPrivateAccess = "true"))
+	TSubclassOf<ACannon>	AttachmentType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cannon", meta = (AllowPrivateAccess = "true", AllowedClasses = "Cannon"))
+	class UChildActorComponent* Cannon;
+
 
 public:
 	// Sets default values for this pawn's properties
@@ -96,7 +106,7 @@ public:
 
 	/** FVector2D for Cannon Elevation (Up/Down) Arc*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
-	FVector2D CannonElevation = FVector2D(-20, 50);
+	FVector2D CannonElevation = FVector2D(-20, 75);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -110,6 +120,12 @@ protected:
 
 	/** Called for Interact input */
 	void Interact(const FInputActionValue& Value);
+
+	/** Called for OnFire input */
+	void StartFire(const FInputActionValue& Value);
+	
+	/** Called for StopFire input */
+	void StopFire(const FInputActionValue& Value);
 
 	/** Called for Fire input */
 	void Fire(const FInputActionValue& Value);

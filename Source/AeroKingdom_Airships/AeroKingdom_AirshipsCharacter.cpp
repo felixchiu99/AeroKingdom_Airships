@@ -133,8 +133,8 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
 	if (bIsHit && InteractHit.GetActor() != this) {
 		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
-			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
 
 			/* see if the thing is already possessed */
 			IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(InteractHit.GetActor());
@@ -159,11 +159,11 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 			}
 		}
 		else {
-			DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
 		}
 	}
 	else {
-		DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, ECC_WorldStatic, 1.0f);
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, ECC_WorldStatic, 1.0f);
 	}
 }
 

@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "Cannon.h"
 
 // Sets default values
 AFirstCannon::AFirstCannon()
@@ -39,16 +40,7 @@ AFirstCannon::AFirstCannon()
 	// Create a cannon Stand for visualisation
 	CannonStand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonStand"));
 	CannonStand->SetupAttachment(CannonBase);
-	// set path for static mesh. Check path of mesh in content browser.
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Stand(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_Stand.5InchCannon_Stand'"));
-	// check if path is valid. Check path of mesh in content browser.
-	if (Stand.Succeeded())
-	{
-		// mesh = valid path
-		CannonStand->SetStaticMesh(Stand.Object);
-		// set relative location of mesh
-		CannonStand->SetRelativeLocation(FVector(0.0f, 0.0f, 58.f));
-	}
+	CannonStand->SetRelativeLocation(FVector(0.0f, 0.0f, 0.f));
 
 	// Create a cannon Support for visualisation
 	CannonSupport = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonSupport"));
@@ -60,7 +52,7 @@ AFirstCannon::AFirstCannon()
 		// mesh = valid path
 		CannonSupport->SetStaticMesh(Support.Object);
 		// set relative location of mesh
-		CannonSupport->SetRelativeLocation(FVector(0.0f, 0.0f, 80.0f));
+		CannonSupport->SetRelativeLocation(FVector(0.0f, 0.0f, 160.0f));
 	}
 	CannonSupport->SetupAttachment(CannonStand);
 
@@ -68,6 +60,7 @@ AFirstCannon::AFirstCannon()
 	CannonPivot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonPivot"));
 	CannonPivot->SetupAttachment(CannonSupport);
 
+	/*
 	// Create a cannon Support for visualisation
 	CannonCarrier = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonCarrier"));
 	// set path for static mesh. Check path of mesh in content browser.
@@ -95,10 +88,16 @@ AFirstCannon::AFirstCannon()
 	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
 	FirePoint->SetupAttachment(CannonBarrel);
 	FirePoint->SetRelativeLocation(FVector(370.0f, 0.0f, 0.0f));
+	*/
+
+	//create a cannon sub actor
+	Cannon = CreateOptionalDefaultSubobject<UChildActorComponent>(TEXT("Cannon"));
+	Cannon->SetChildActorClass(AttachmentType);
+	Cannon->SetupAttachment(CannonPivot);
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("AimCamera"));
-	FirstPersonCameraComponent->AttachToComponent(CannonCarrier, FAttachmentTransformRules::KeepRelativeTransform);
+	FirstPersonCameraComponent->AttachToComponent(Cannon, FAttachmentTransformRules::KeepRelativeTransform);
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-5.f, 0.f, 28.f)); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = false;
 }
@@ -138,13 +137,25 @@ void AFirstCannon::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AFirstCannon::Interact);
 
 		// Fire
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AFirstCannon::Fire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AFirstCannon::StartFire);
+
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &AFirstCannon::StopFire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Canceled, this, &AFirstCannon::StopFire);
 	}
+}
+
+void AFirstCannon::StartFire(const FInputActionValue& Value)
+{
+	((ACannon*)Cannon->GetChildActor())->StartFire();
+}
+void AFirstCannon::StopFire(const FInputActionValue& Value)
+{
+	//((ACannon*)Cannon->GetChildActor())->StopFire();
 }
 
 void AFirstCannon::Fire(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Fire!"));
+	((ACannon*)Cannon->GetChildActor())->Fire();
 }
 
 void AFirstCannon::Turn(const FInputActionValue& Value)
