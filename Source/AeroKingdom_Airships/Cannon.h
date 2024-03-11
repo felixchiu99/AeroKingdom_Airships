@@ -8,6 +8,7 @@
 
 class UArrowComponent;
 class USkeletalMeshComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class AEROKINGDOM_AIRSHIPS_API ACannon : public AActor
@@ -51,6 +52,10 @@ public:
 	//firing Timer Handle
 	FTimerHandle FireTimer;
 
+	//Niagara muzzle effect
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UNiagaraSystem* FireEffectMuzzle;
+
 public:	
 	// Sets default values for this actor's properties
 	ACannon();
@@ -75,4 +80,7 @@ protected:
 	/** Bool for whether there the cannons are shooting*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bOnCooldown = false;
+
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	float fMuzzleAnimOffset = 30.f;
 };

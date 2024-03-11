@@ -3,6 +3,8 @@
 #include "AeroKingdom_Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AAeroKingdom_Projectile::AAeroKingdom_Projectile()
@@ -27,14 +29,18 @@ AAeroKingdom_Projectile::AAeroKingdom_Projectile()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 6400.f;
-	ProjectileMovement->MaxSpeed = 7000.f;
+	ProjectileMovement->InitialSpeed = 7000.f;
+	ProjectileMovement->MaxSpeed = 7500.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
 
 	// Die after 3 seconds by default
-	InitialLifeSpan = 3.0f;
-
+	InitialLifeSpan = fExplodeTimer + 1;
+	UWorld* const World = GetWorld();
+	if (World != nullptr)
+	{
+		World->GetTimerManager().SetTimer(ExplosionTimer, this, &AAeroKingdom_Projectile::OnExplode, fExplodeTimer, false);
+	}
 }
 
 void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -46,7 +52,38 @@ void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 
 		//Destroy();
 	}
+
+	OnHitExplode();
+}
+
+void AAeroKingdom_Projectile::OnExplode()
+{
+	UWorld* const World = GetWorld();
+	if (World != nullptr)
+	{
+		// Try and play the niagara Animation
+		if (ShellExplosion) {
+			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, ShellExplosion, GetTransform().GetLocation());
+		}
+	}
 	Destroy();
 }
+
+void AAeroKingdom_Projectile::OnHitExplode()
+{
+	UWorld* const World = GetWorld();
+	if (World != nullptr)
+	{
+		// Try and play the niagara Animation
+		if (ShellExplosion) {
+			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, ShellOnHit, GetTransform().GetLocation());
+		}
+	}
+	Destroy();
+}
+
+
 
 

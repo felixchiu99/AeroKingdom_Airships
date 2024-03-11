@@ -8,7 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
-
+class UNiagaraSystem;
 
 UCLASS(config = Game)
 class AAeroKingdom_Projectile : public AActor
@@ -26,6 +26,18 @@ class AAeroKingdom_Projectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
+public:
+	//Niagara muzzle effect
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UNiagaraSystem* ShellOnHit;
+
+	//Niagara muzzle effect
+	UPROPERTY(EditAnywhere, Category = "Animation")
+	UNiagaraSystem* ShellExplosion;
+
+	//Explosion Timer Handle
+	FTimerHandle ExplosionTimer;
+
 public:	
 	// Sets default values for this actor's properties
 	AAeroKingdom_Projectile();
@@ -34,9 +46,20 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	/** called Playing Explosion animation */
+	UFUNCTION()
+	void OnExplode();
+
+	/** called Playing Explosion animation */
+	UFUNCTION()
+	void OnHitExplode();
+
 	/** Returns CollisionComp subobject **/
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
 	/** Returns ProjectileMovement subobject **/
 	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
+	// Auto Explode Timer
+	UPROPERTY(EditAnywhere)
+	float fExplodeTimer = 2.f;
 };

@@ -7,6 +7,8 @@
 #include "AeroKingdom_Projectile.h"
 #include "AeroKingdom_AirshipsProjectile.h"
 #include "Components/ArrowComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -78,6 +80,12 @@ void ACannon::Fire()
 			// Set Fire Timer
 			World->GetTimerManager().SetTimer(FireTimer, this, &ACannon::ResetCoolDown, CoolDownTimer, false);
 			bOnCooldown = true;
+
+			// Try and play the niagara Animation
+			if (FireEffectMuzzle) {
+				// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
+				UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, FireEffectMuzzle, FirePoint->GetComponentLocation() + (FirePoint->GetForwardVector() * fMuzzleAnimOffset) , FirePoint->GetComponentRotation());
+			}
 		}
 	
 		// Try and play the sound if specified
@@ -89,6 +97,14 @@ void ACannon::Fire()
 		if (FireAnim != nullptr) {
 			CannonBarrelAnim->PlayAnimation(FireAnim, false);
 		}
+
+		/*
+		// Try and play the niagara Animation
+		if (FireEffectMuzzle) {
+			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(FireEffectMuzzle, FirePoint, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::Type::KeepRelativeOffset, true);
+		}
+		*/
 
 	}
 }
