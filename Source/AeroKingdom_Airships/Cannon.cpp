@@ -57,7 +57,6 @@ ACannon::ACannon()
 		FireAnim = BarrelAnim.Object;
 	}
 
-
 	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
 	FirePoint->SetupAttachment(CannonBarrelAnim);
 	FirePoint->SetRelativeLocation(FVector(370.0f, 0.0f, 0.0f));
@@ -97,15 +96,6 @@ void ACannon::Fire()
 		if (FireAnim != nullptr) {
 			CannonBarrelAnim->PlayAnimation(FireAnim, false);
 		}
-
-		/*
-		// Try and play the niagara Animation
-		if (FireEffectMuzzle) {
-			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
-			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(FireEffectMuzzle, FirePoint, NAME_None, FVector(0.f), FRotator(0.f), EAttachLocation::Type::KeepRelativeOffset, true);
-		}
-		*/
-
 	}
 }
 

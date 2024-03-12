@@ -2,13 +2,13 @@
 
 #include "AeroKingdom_AirshipsCharacter.h"
 #include "AeroKingdom_AirshipsProjectile.h"
-#include "FirstCannon.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InteractableInterface.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 
@@ -139,7 +139,7 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 			/* see if the thing is already possessed */
 			IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(InteractHit.GetActor());
 			APawn* PossessAbleObj = Cast<APawn>(InteractHit.GetActor());
-			if (InteractableObj && PossessAbleObj && !InteractableObj->bIsCurrentlyPossessed) {
+			if (InteractableObj && PossessAbleObj && !InteractableObj->IsPossessed()) {
 				/* Save controller */
 				if (!SavedController) {
 					SavedController = GetController();

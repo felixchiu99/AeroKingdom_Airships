@@ -22,12 +22,17 @@ class AEROKINGDOM_AIRSHIPS_API IInteractableInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	bool bIsCurrentlyPossessed = false;
-
-	APawn* PossessedChar;
-	
 	virtual void Possess(APawn* PossessingChar);
 
 	virtual void UnPossess(AController* SavedController);
 
+	virtual bool IsPossessed();
+
+protected:
+
+	virtual void MoveCharacter();
+
+	APawn* PossessedChar;
+
+	bool bIsCurrentlyPossessed = false;
 };

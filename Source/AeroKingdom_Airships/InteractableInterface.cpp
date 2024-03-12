@@ -23,6 +23,17 @@ void IInteractableInterface::UnPossess(AController* SavedController)
 	}
 
 	/* Possess Character */
-	if(PossessedChar)
+	if (PossessedChar) {
+		MoveCharacter();
 		SavedController->Possess(PossessedChar);
+	}
+}
+
+bool IInteractableInterface::IsPossessed()
+{
+	return bIsCurrentlyPossessed;
+}
+
+void IInteractableInterface::MoveCharacter()
+{
 }

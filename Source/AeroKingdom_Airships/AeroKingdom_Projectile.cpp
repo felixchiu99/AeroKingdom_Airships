@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAeroKingdom_Projectile::AAeroKingdom_Projectile()
@@ -58,31 +59,41 @@ void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 
 void AAeroKingdom_Projectile::OnExplode()
 {
-	UWorld* const World = GetWorld();
-	if (World != nullptr)
-	{
-		// Try and play the niagara Animation
-		if (ShellExplosion) {
-			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
-			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, ShellExplosion, GetTransform().GetLocation());
-		}
-	}
+	PlayExplodeAnimation(ShellExplosion);
+	PlayExplodeSound();
 	Destroy();
 }
 
 void AAeroKingdom_Projectile::OnHitExplode()
 {
+	PlayExplodeAnimation(ShellOnHit);
+	PlayExplodeSound();
+	Destroy();
+}
+
+void AAeroKingdom_Projectile::PlayExplodeAnimation(UNiagaraSystem* Animation)
+{
 	UWorld* const World = GetWorld();
 	if (World != nullptr)
 	{
 		// Try and play the niagara Animation
-		if (ShellExplosion) {
+		if (Animation) {
 			// This spawns the chosen effect on the owning WeaponMuzzle SceneComponent
-			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, ShellOnHit, GetTransform().GetLocation());
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, Animation, GetTransform().GetLocation());
 		}
 	}
-	Destroy();
 }
+
+void AAeroKingdom_Projectile::PlayExplodeSound()
+{
+	// Try and play the sound if specified
+	if (ExplosionSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetTransform().GetLocation(), 1.f, 1.f, 0.0f, AudioSetting);
+	}
+}
+
+
 
 
 

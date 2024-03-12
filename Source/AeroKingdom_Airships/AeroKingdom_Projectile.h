@@ -26,7 +26,7 @@ class AAeroKingdom_Projectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
-public:
+protected:
 	//Niagara muzzle effect
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UNiagaraSystem* ShellOnHit;
@@ -38,6 +38,14 @@ public:
 	//Explosion Timer Handle
 	FTimerHandle ExplosionTimer;
 
+	/** Sound to play each time the Shell Explodes */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+	USoundBase* ExplosionSound;
+
+	/** Sound Attenuation settings*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+	USoundAttenuation* AudioSetting;
+
 public:	
 	// Sets default values for this actor's properties
 	AAeroKingdom_Projectile();
@@ -46,13 +54,21 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	/** called Playing Explosion animation */
+	/** Pass Explosion On Explosion animation */
 	UFUNCTION()
 	void OnExplode();
 
-	/** called Playing Explosion animation */
+	/** Pass Explosion On Hit animation */
 	UFUNCTION()
 	void OnHitExplode();
+
+	/** Play Explosion animation */
+	UFUNCTION()
+	void PlayExplodeAnimation(UNiagaraSystem* Animation);
+
+	/** Play Explosion Sound */
+	UFUNCTION()
+	void PlayExplodeSound();
 
 	/** Returns CollisionComp subobject **/
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
