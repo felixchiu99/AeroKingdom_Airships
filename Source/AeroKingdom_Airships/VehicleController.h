@@ -25,6 +25,9 @@ class AEROKINGDOM_AIRSHIPS_API AVehicleController : public APawn, public IIntera
 	UPROPERTY(VisibleDefaultsOnly, Category = Interaction)
 	UArrowComponent* ExitPoint;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
+	UStaticMeshComponent* CameraPoint;
+
 	/** First person camera */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
@@ -33,11 +36,33 @@ class AEROKINGDOM_AIRSHIPS_API AVehicleController : public APawn, public IIntera
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
 
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LiftAction;
+
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LookAction;
+
+	/** Interact Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 public:
 	// Sets default values for this pawn's properties
 	AVehicleController();
 
 protected:
+	/** Called for movement input */
+	void Move(const FInputActionValue& Value);
+
+	/** Called for looking input */
+	void Look(const FInputActionValue& Value);
+
 	/** Called for Interact input */
 	void Interact(const FInputActionValue& Value);
 
