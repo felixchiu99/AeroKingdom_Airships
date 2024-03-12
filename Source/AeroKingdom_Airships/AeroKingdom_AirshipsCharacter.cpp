@@ -8,6 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InteractableInterface.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 
@@ -73,6 +74,9 @@ void AAeroKingdom_AirshipsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAeroKingdom_AirshipsCharacter::Look);
+
+		// Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAeroKingdom_AirshipsCharacter::Interact);
 	}
 	else
 	{
@@ -104,6 +108,62 @@ void AAeroKingdom_AirshipsCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
+{
+	FVector Start;
+	FVector End;
+
+	FVector PlayerEyesLoc;
+	FRotator PlayerEyesRot;
+
+	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
+
+	float LineTraceDistance = 200.f;
+
+	Start = PlayerEyesLoc;
+	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * LineTraceDistance);
+
+	FCollisionQueryParams TraceParams(FName(TEXT("InteractTrace")), true, this);
+
+	FHitResult InteractHit = FHitResult(ForceInit);
+
+	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
+	if (bIsHit && InteractHit.GetActor() != this) {
+		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
+
+			/* see if the thing is already possessed */
+			IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(InteractHit.GetActor());
+			APawn* PossessAbleObj = Cast<APawn>(InteractHit.GetActor());
+			if (InteractableObj && PossessAbleObj && !InteractableObj->IsPossessed()) {
+				/* Save controller */
+				if (!SavedController) {
+					SavedController = GetController();
+				}
+
+				/* unpossess current controller */
+				SavedController->UnPossess();
+				/* Disable state management on the possessed character */
+				/* Disable Movement */
+				//GetCharacterMovement()
+
+				/* Possess Character */
+				InteractableObj->Possess(this);
+				SavedController->Possess(PossessAbleObj);
+
+				/* Enable Movement */
+			}
+		}
+		else {
+			//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
+		}
+	}
+	else {
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, ECC_WorldStatic, 1.0f);
 	}
 }
 
