@@ -24,20 +24,26 @@ AVehicleController::AVehicleController()
 		VehicleControllerBase->SetStaticMesh(Base.Object);
 	}
 	
-	// Create a Exit point for Character spawn after using the cannon
+	// Create a Exit point for Character spawn after using the controlable object
 	ExitPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ExitPoint"));
 	ExitPoint->SetupAttachment(VehicleControllerBase);
 	ExitPoint->SetRelativeLocation(FVector(-80.f, 0.f, 0.f));
 
-	// Create a Exit point for Character spawn after using the cannon
+	// Create a point for Spinning  the camera
 	CameraPoint = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CameraPoint"));
 	CameraPoint->SetupAttachment(VehicleControllerBase);
-	CameraPoint->SetRelativeLocation(FVector(0.f, 0.f, 80.f));
+	CameraPoint->SetRelativeLocation(FVector(-60.f, 0.f, 80.f));
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("1pCamera"));
 	FirstPersonCameraComponent->AttachToComponent(CameraPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	FirstPersonCameraComponent->bUsePawnControlRotation = false;
+
+	// Create a CameraComponent	
+	ThirdPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("3pCamera"));
+	ThirdPersonCameraComponent->AttachToComponent(CameraPoint, FAttachmentTransformRules::KeepRelativeTransform);
+	ThirdPersonCameraComponent->bUsePawnControlRotation = false;
+	ThirdPersonCameraComponent->SetRelativeLocation(FVector(-300.f, 0.f, 0.f));
 }
 
 // Called to bind functionality to input
@@ -65,6 +71,11 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AVehicleController::Interact);
 	}
 
+}
+
+void AVehicleController::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AVehicleController::Move(const FInputActionValue& Value)
@@ -101,7 +112,10 @@ void AVehicleController::Look(const FInputActionValue& Value)
 void AVehicleController::MoveCharacter()
 {
 	PossessedChar->SetActorLocation(ExitPoint->GetComponentLocation());
-	PossessedChar->SetActorRotation(ExitPoint->GetComponentRotation());
+	FVector Rotation = ExitPoint->GetComponentRotation().Euler();
+	Rotation.Z = 0;
+	PossessedChar->SetActorRotation(Rotation.ToOrientationRotator());
+
 }
 
 void AVehicleController::Interact(const FInputActionValue& Value)

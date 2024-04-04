@@ -9,6 +9,7 @@ void IInteractableInterface::Possess(APawn* PossessingChar)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, ( PossessingChar==nullptr ? "True" : "False"));
 	PossessedChar = PossessingChar;
+	EnableCharacter(false);
 	bIsCurrentlyPossessed = true;
 }
 
@@ -25,6 +26,7 @@ void IInteractableInterface::UnPossess(AController* SavedController)
 	/* Possess Character */
 	if (PossessedChar) {
 		MoveCharacter();
+		EnableCharacter(true);
 		SavedController->Possess(PossessedChar);
 	}
 }
@@ -36,4 +38,11 @@ bool IInteractableInterface::IsPossessed()
 
 void IInteractableInterface::MoveCharacter()
 {
+}
+
+void IInteractableInterface::EnableCharacter(bool enabled)
+{
+	PossessedChar->SetActorTickEnabled(enabled);
+	PossessedChar->SetActorHiddenInGame(!enabled);
+	PossessedChar->SetActorEnableCollision(enabled);
 }

@@ -19,6 +19,7 @@ class AEROKINGDOM_AIRSHIPS_API AVehicleController : public APawn, public IIntera
 {
 	GENERATED_BODY()
 
+protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	UStaticMeshComponent* VehicleControllerBase;
 
@@ -31,6 +32,10 @@ class AEROKINGDOM_AIRSHIPS_API AVehicleController : public APawn, public IIntera
 	/** First person camera */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
+
+	/** Third person camera */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* ThirdPersonCameraComponent;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -57,17 +62,20 @@ public:
 	AVehicleController();
 
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	virtual void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
+	virtual void Look(const FInputActionValue& Value);
 
 	/** Called for Interact input */
-	void Interact(const FInputActionValue& Value);
+	virtual void Interact(const FInputActionValue& Value);
 
 	/* Called for Moving Character after Exiting the controller*/
-	void MoveCharacter() override;
+	virtual void MoveCharacter() override;
 
 public:	
 	// Called to bind functionality to input

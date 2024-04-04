@@ -31,6 +31,8 @@ public:
 protected:
 
 	virtual void MoveCharacter();
+	virtual void EnableCharacter(bool enabled);
+
 
 	APawn* PossessedChar;
 
