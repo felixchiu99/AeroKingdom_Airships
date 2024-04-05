@@ -45,4 +45,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetSteeringPos(float input);
+
+	void SetThrottlePos(float input);
 };

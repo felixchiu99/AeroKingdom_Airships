@@ -87,3 +87,11 @@ void AAirshipController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(LiftAction, ETriggerEvent::Triggered, this, &AAirshipController::Lift);
 	}
 }
+
+void AAirshipController::SetSteeringPos(float input)
+{
+}
+
+void AAirshipController::SetThrottlePos(float input)
+{
+}

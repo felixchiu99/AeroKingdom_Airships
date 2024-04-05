@@ -130,8 +130,10 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 
 	FHitResult InteractHit = FHitResult(ForceInit);
 
+	// get hit object type
 	FCollisionObjectQueryParams ObjectTypeParams;
-	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel13);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
 	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel3);
 	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel4);

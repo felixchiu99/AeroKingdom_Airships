@@ -44,6 +44,7 @@ class AEROKINGDOM_AIRSHIPS_API AAirship : public AVehicle
 		// Called every frame
 		virtual void Tick(float DeltaTime) override;
 
+		//Throttle Input
 		virtual void MoveForward() override;
 
 		virtual void MoveBackward() override;
@@ -52,13 +53,14 @@ class AEROKINGDOM_AIRSHIPS_API AAirship : public AVehicle
 
 		virtual void AxisUpward(float input);
 
+		// Yaw Input
 		virtual void Yaw(float input);
 
 		void ApplyYaw(float DeltaTime);
 
 		void ReduceYaw(float DeltaTime);
 
-		// Apply Lift 
+		// Lift
 		void ApplyLift(float StepTime);
 
 		// Apply Neutral Lift (not including player reaction force)
@@ -67,13 +69,14 @@ class AEROKINGDOM_AIRSHIPS_API AAirship : public AVehicle
 		// Apply Reactive Lift (counteract player reaction force)
 		void ApplyReactiveLift(float StepTime, bool bDebug = false);
 
+		void UpdateHeight();
+
+		// Linear Damping
 		void ApplyDamping(float DeltaTime);
 
 		void DisplayAxisSpeed();
 
 		FVector ApplyAbsAxis(FVector Axis);
-
-		void ApplySpeedLimit(float DeltaTime);
 
 	protected:
 		
@@ -95,6 +98,10 @@ class AEROKINGDOM_AIRSHIPS_API AAirship : public AVehicle
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rudder Attributes")
 		float fRudderTorqueMultiplier = 1.0f;
 
+		/** FVector2D for Min/Max Height of airship to reach*/
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lift Attributes")
+		FVector2D LiftLimit = FVector2D(-300, 25000);
+
 private:
 		bool bRudderTurn = false;
 
@@ -103,6 +110,8 @@ private:
 		float fThrottleUpward = 0;
 
 		float fHeight = 0;
+		float fCurrentHeight = 0;
+		float fActiveLiftPower = 15.f;
 		float fReactiveLiftMultiplier = 1.2f;
 
 		float PushStrength = 5000000.f;

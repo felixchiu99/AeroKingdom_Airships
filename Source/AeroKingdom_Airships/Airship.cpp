@@ -57,10 +57,11 @@ void AAirship::BeginPlay()
 void AAirship::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	UpdateHeight();
 	ApplyLift(DeltaTime);
 	ApplyDamping(DeltaTime);
 	ApplyYaw(DeltaTime);
-	DisplayAxisSpeed();
+	//DisplayAxisSpeed();
 }
 
 void AAirship::MoveForward()
@@ -70,7 +71,7 @@ void AAirship::MoveForward()
 
 void AAirship::MoveBackward()
 {
-	ShipBase->AddForce(GetActorForwardVector() * -PushStrength);
+	ShipBase->AddForce(GetActorForwardVector() * -PushStrength * 0.8f);
 }
 
 void AAirship::AxisForward(float input)
@@ -80,7 +81,18 @@ void AAirship::AxisForward(float input)
 
 void AAirship::AxisUpward(float input)
 {
-	Balloon->AddImpulse(FVector(0,0, input * 10.f),"none",true);
+	float LiftPower = (LiftLimit.Y - fCurrentHeight) / (LiftLimit.Y);
+	LiftPower = FMath::Clamp(LiftPower * LiftPower, 0, 1);
+	
+	LiftPower *= input * fActiveLiftPower;
+
+	if (fCurrentHeight < LiftLimit.X && LiftPower < 0) {
+		LiftPower *= 0;
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Lift Power " + FString::SanitizeFloat(LiftPower)));
+
+	Balloon->AddImpulse(FVector(0,0, LiftPower),"none",true);
 	fHeight = GetActorLocation().Z;
 }
 
@@ -138,9 +150,20 @@ void AAirship::ApplyNeutralLift(float StepTime, bool bDebug)
 
 void AAirship::ApplyReactiveLift(float StepTime, bool bDebug)
 {
-	if (GetActorLocation().Z < fHeight) {
+	if (fCurrentHeight < fHeight) {
 		FVector linearVelocity = GetVelocity();
 		Balloon->AddImpulse(FVector(0,0, abs(fHeight-GetActorLocation().Z) * fReactiveLiftMultiplier), "None", true);
+	}
+}
+
+void AAirship::UpdateHeight()
+{
+	fCurrentHeight = GetActorLocation().Z;
+	if (fCurrentHeight < LiftLimit.X) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Height " + FString::SanitizeFloat(fCurrentHeight)));
+	}
+	if (fCurrentHeight > LiftLimit.Y) {
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Height " + FString::SanitizeFloat(fCurrentHeight)));
 	}
 }
 
@@ -188,11 +211,6 @@ void AAirship::DisplayAxisSpeed()
 FVector AAirship::ApplyAbsAxis(FVector Axis)
 {
 	return FVector(abs(Axis.X), abs(Axis.Y), abs(Axis.Z));
-}
-
-void AAirship::ApplySpeedLimit(float DeltaTime)
-{
-	
 }
 
 
