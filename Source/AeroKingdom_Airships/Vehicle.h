@@ -11,6 +11,10 @@ class AEROKINGDOM_AIRSHIPS_API AVehicle : public AActor
 {
 	GENERATED_BODY()
 	
+protected:
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UStaticMeshComponent* Core;
+
 public:	
 	// Sets default values for this actor's properties
 	AVehicle();
@@ -20,7 +24,39 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void MoveForward();
 
+	virtual void MoveBackward();
+
+	virtual void MoveLeft();
+
+	virtual void MoveRight();
+
+	virtual void MoveUp();
+
+	virtual void MoveDown();
+
+	virtual void YawLeft();
+
+	virtual void YawRight();
+
+	virtual void RollLeft();
+
+	virtual void RollRight();
+
+	virtual void PitchUp();
+
+	virtual void PitchDown();
+
+	virtual void AxisForward(float input);
+
+	virtual void AxisRight(float input);
+
+	virtual void AxisUp(float input);
+
+	virtual void Yaw(float input);
+
+	virtual void Roll(float input);
+
+	virtual void Pitch(float input);
 };

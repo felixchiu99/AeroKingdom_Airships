@@ -121,7 +121,7 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 
 	GetActorEyesViewPoint(PlayerEyesLoc, PlayerEyesRot);
 
-	float LineTraceDistance = 200.f;
+	float LineTraceDistance = 600.f;
 
 	Start = PlayerEyesLoc;
 	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * LineTraceDistance);
@@ -130,7 +130,16 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 
 	FHitResult InteractHit = FHitResult(ForceInit);
 
-	bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
+	// get hit object type
+	FCollisionObjectQueryParams ObjectTypeParams;
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_WorldStatic);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel2);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel3);
+	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel4);
+
+	//bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
+	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(InteractHit, Start, End, ObjectTypeParams, TraceParams);
 	if (bIsHit && InteractHit.GetActor() != this) {
 		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
 			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
