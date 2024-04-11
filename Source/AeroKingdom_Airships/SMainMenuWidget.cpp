@@ -4,6 +4,7 @@
 #include "SMainMenuWidget.h"
 #include "GameFramework/PlayerController.h"
 #include "MenuHUD.h"
+#include "SLevelLoadList.h"
 #include "SLevelButton.h"
 
 #define LOCTEXT_NAMESPACE "MainMenu"
@@ -16,7 +17,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	const FMargin ButtonPadding = FMargin(10.f);
 
 	const FText TitleText = LOCTEXT("GameTitle", "AeroKingdom Stage 0");
-	const FText PlayText = LOCTEXT("PlayGame", "Play");
+	const FText PlayText = LOCTEXT("PlayGame", "Level Select");
 	const FText SettingsText = LOCTEXT("Settings", "Settings");
 	const FText QuitText = LOCTEXT("QuitGame", "Quit");
 
@@ -30,20 +31,19 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		[
 
 			SNew(SOverlay)
-			+ SOverlay::Slot()
+				+ SOverlay::Slot()
 				.HAlign(HAlign_Fill)
 				.VAlign(VAlign_Fill)
 				[
 					SNew(SImage)
 						.ColorAndOpacity(FColor::Black)
 				]
-			+ SOverlay::Slot()
+				+ SOverlay::Slot()
 				.HAlign(HAlign_Fill)
 				.VAlign(VAlign_Fill)
 				.Padding(ContentPadding)
 				[
 					SNew(SVerticalBox)
-
 					//Title Text
 					+ SVerticalBox::Slot()
 					[
@@ -55,62 +55,62 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 
 					//Play Button
 					+ SVerticalBox::Slot()
-						.Padding(ButtonPadding)
-						[
-							SNew(SButton)
+					.Padding(ButtonPadding)
+					[
+						SNew(SButton)
 							.OnClicked(this, &SMainMenuWidget::OnPlayClicked)
 							[
 								SNew(STextBlock)
-								.Font(ButtonTextStyle)
-								.Text(PlayText)
-								.Justification(ETextJustify::Center)
+									.Font(ButtonTextStyle)
+									.Text(PlayText)
+									.Justification(ETextJustify::Center)
 							]
-						]
+					]
 
 					//Settings Button
 					+ SVerticalBox::Slot()
-						.Padding(ButtonPadding)
-						[
-							SNew(SButton)
+					.Padding(ButtonPadding)
+					[
+						SNew(SButton)
 							[
 								SNew(STextBlock)
-								.Font(ButtonTextStyle)
-								.Text(SettingsText)
-								.Justification(ETextJustify::Center)
+									.Font(ButtonTextStyle)
+									.Text(SettingsText)
+									.Justification(ETextJustify::Center)
 							]
-						]
+					]
 
 					//Quit Button
 					+ SVerticalBox::Slot()
-						.Padding(ButtonPadding)
-						[
-							SNew(SButton)
+					.Padding(ButtonPadding)
+					[
+						SNew(SButton)
 							.OnClicked(this, &SMainMenuWidget::OnQuitClicked)
 							[
 								SNew(STextBlock)
-								.Font(ButtonTextStyle)
-								.Text(QuitText)
-								.Justification(ETextJustify::Center)
+									.Font(ButtonTextStyle)
+									.Text(QuitText)
+									.Justification(ETextJustify::Center)
 							]
-						]
-						
-					//Test Button
-					+ SVerticalBox::Slot()
-						.Padding(ButtonPadding)
-						[
-							SNew(SLevelButton).OwningHUD(OwningHUD)
-						]
+					]
 				]
 		];
-
+	
 }
 FReply SMainMenuWidget::OnPlayClicked() const
 {
 	if (OwningHUD.IsValid()) {
 		OwningHUD->RemoveMenu();
+		OwningHUD->ShowMenu( AMenuHUD::MenuName::LevelSelect );
 	}
 	return FReply::Handled();
 }
+
+FReply SMainMenuWidget::OnLevelSelectClicked() const
+{
+	return FReply::Handled();
+}
+
 FReply SMainMenuWidget::OnQuitClicked() const
 {
 	if (OwningHUD.IsValid()) {
@@ -122,4 +122,5 @@ FReply SMainMenuWidget::OnQuitClicked() const
 
 	return FReply::Handled();
 }
+
 #undef LOCTEXT_NAMESPACE

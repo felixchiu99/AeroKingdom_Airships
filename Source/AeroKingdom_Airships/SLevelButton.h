@@ -13,10 +13,13 @@ class AEROKINGDOM_AIRSHIPS_API SLevelButton : public SCompoundWidget
 	SLATE_BEGIN_ARGS(SLevelButton) {}
 
 	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuHUD>, OwningHUD)
+	SLATE_ARGUMENT(FString, LevelNameTitle)
+	SLATE_ARGUMENT(FName, LevelName)
 
 	SLATE_END_ARGS()
 
 	FName LevelName = "AirshipTest";
+	FString LevelNameTitle = "AirshipTestName";
 
 	/* every widget needs a contruction function */
 	void Construct(const FArguments& InArgs);

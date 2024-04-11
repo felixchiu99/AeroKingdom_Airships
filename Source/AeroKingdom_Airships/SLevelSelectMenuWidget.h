@@ -4,25 +4,22 @@
 
 #include "SlateBasics.h"
 #include "SlateExtras.h"
+
 /**
  * 
  */
-class SMainMenuWidget : public SCompoundWidget
+class AEROKINGDOM_AIRSHIPS_API SLevelSelectMenuWidget : public SCompoundWidget
 {
-public:
+	SLATE_BEGIN_ARGS(SLevelSelectMenuWidget) {}
 
-	SLATE_BEGIN_ARGS(SMainMenuWidget){}
-
-	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuHUD>, OwningHUD)
+		SLATE_ARGUMENT(TWeakObjectPtr<class AMenuHUD>, OwningHUD)
 
 	SLATE_END_ARGS()
 
 	/* every widget needs a contruction function */
 	void Construct(const FArguments& InArgs);
 
-	FReply OnPlayClicked() const;
-	FReply OnLevelSelectClicked() const;
-	FReply OnQuitClicked() const;
+	FReply OnBackClicked() const;
 
 	/** the HUD that Created This widget*/
 	TWeakObjectPtr<class AMenuHUD> OwningHUD;

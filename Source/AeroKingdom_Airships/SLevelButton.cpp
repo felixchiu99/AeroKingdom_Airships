@@ -9,11 +9,13 @@
 void SLevelButton::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
+	if (!InArgs._LevelNameTitle.IsEmpty())
+		LevelNameTitle = InArgs._LevelNameTitle;
+	if (!InArgs._LevelName.IsNone())
+		LevelName = InArgs._LevelName;
 
-	const FMargin ContentPadding = FMargin(500.f, 300.0f);
-	const FMargin ButtonPadding = FMargin(10.f);
-
-	const FText ButtonText = LOCTEXT("ButtonText", "test1");
+	//const FText ButtonText = LOCTEXT("LevelText", FText::FromString(LevelNameText));
+	const FText ButtonText = FText::Format(LOCTEXT("LevelNameTitle {0}", "{1}"), FText::FromString(LevelNameTitle), FText::FromName(LevelName));
 
 	FSlateFontInfo ButtonTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
 	ButtonTextStyle.Size = 40.f;
@@ -35,6 +37,7 @@ void SLevelButton::Construct(const FArguments& InArgs)
 FReply SLevelButton::OnClicked() const
 {
 	if (OwningHUD.IsValid()) {
+		OwningHUD->RemoveMenu();
 		OwningHUD->LoadLevel(LevelName);
 	}
 

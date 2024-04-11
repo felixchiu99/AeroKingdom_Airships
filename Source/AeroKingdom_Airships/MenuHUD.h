@@ -15,14 +15,28 @@ class AEROKINGDOM_AIRSHIPS_API AMenuHUD : public AHUD
 	
 	LevelLoader* Loader;
 
+public:
+	enum MenuName 
+	{
+		Main,
+		LevelSelect,
+		Pause,
+		Setting
+	};
+
 protected:
-	TSharedPtr<class SMainMenuWidget> MenuWidget;
+	TSharedPtr<class SMainMenuWidget> MainMenuWidget;
+	TSharedPtr<class SLevelSelectMenuWidget> LevelSelectMenuWidget;
 	TSharedPtr<class SWidget> MenuWidgetContainer;
 
 	virtual void BeginPlay() override;
 
+	void ShowMainMenu();
+	void ShowLevelSelectMenu();
+	void ShowSelectedMenu(enum MenuName name);
+
 public:
-	void ShowMenu();
+	void ShowMenu(enum MenuName name = MenuName::Main);
 	void RemoveMenu();
 	void LoadLevel(FName levelName);
 };

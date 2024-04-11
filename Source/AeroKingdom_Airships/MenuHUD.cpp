@@ -3,6 +3,7 @@
 #include "MenuHUD.h"
 #include "Engine/Engine.h"
 #include "SMainMenuWidget.h"
+#include "SLevelSelectMenuWidget.h"
 #include "Widgets/SWeakWidget.h"
 #include "GameFramework/HUD.h"
 #include "GameFramework/PlayerController.h"
@@ -16,11 +17,43 @@ void AMenuHUD::BeginPlay()
 	ShowMenu();
 }
 
-void AMenuHUD::ShowMenu()
+void AMenuHUD::ShowMainMenu()
 {
+	MainMenuWidget = SNew(SMainMenuWidget).OwningHUD(this);
+	GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(MenuWidgetContainer, SWeakWidget).PossiblyNullContent(MainMenuWidget.ToSharedRef()));
+}
+
+void AMenuHUD::ShowLevelSelectMenu()
+{
+	LevelSelectMenuWidget = SNew(SLevelSelectMenuWidget).OwningHUD(this);
+	GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(MenuWidgetContainer, SWeakWidget).PossiblyNullContent(LevelSelectMenuWidget.ToSharedRef()));
+}
+
+void AMenuHUD::ShowSelectedMenu(enum MenuName name)
+{
+	switch (name)
+	{
+	case MenuName::LevelSelect:
+		ShowLevelSelectMenu();
+		break;
+	case MenuName::Setting:
+		ShowMainMenu();
+		break;
+	case MenuName::Pause:
+		ShowMainMenu();
+		break;
+	case MenuName::Main:
+	default:
+		ShowMainMenu();
+		break;
+	}
+}
+
+void AMenuHUD::ShowMenu(enum MenuName name)
+{
+
 	if (GEngine && GEngine->GameViewport) {
-		MenuWidget = SNew(SMainMenuWidget).OwningHUD(this);
-		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(MenuWidgetContainer, SWeakWidget).PossiblyNullContent(MenuWidget.ToSharedRef()));
+		ShowSelectedMenu(name);
 
 		if (PlayerOwner) 
 		{
