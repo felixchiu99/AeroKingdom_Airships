@@ -9,13 +9,11 @@
 void SLevelButton::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
-	if (!InArgs._LevelNameTitle.IsEmpty())
-		LevelNameTitle = InArgs._LevelNameTitle;
 	if (!InArgs._LevelName.IsNone())
 		LevelName = InArgs._LevelName;
 
 	//const FText ButtonText = LOCTEXT("LevelText", FText::FromString(LevelNameText));
-	const FText ButtonText = FText::Format(LOCTEXT("LevelNameTitle {0}", "{1}"), FText::FromString(LevelNameTitle), FText::FromName(LevelName));
+	const FText ButtonText = FText::Format(LOCTEXT("LevelNameTitle {0}", "{1}"), FText::FromName(LevelName), FText::FromName(LevelName));
 
 	FSlateFontInfo ButtonTextStyle = FCoreStyle::Get().GetFontStyle("EmbossedText");
 	ButtonTextStyle.Size = 40.f;

@@ -15,10 +15,10 @@ class AEROKINGDOM_AIRSHIPS_API SLevelLoadList : public SCompoundWidget
 
 	SLATE_END_ARGS()
 
-	TMap<FString,FString> MapNames;
-
 	/* every widget needs a contruction function */
 	void Construct(const FArguments& InArgs);
+
+	TArray<FString> GetFolderName(FString MapPath);
 
 	/** the HUD that Created This widget*/
 	TWeakObjectPtr<class AMenuHUD> OwningHUD;

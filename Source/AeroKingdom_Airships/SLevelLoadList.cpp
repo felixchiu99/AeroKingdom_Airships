@@ -3,27 +3,24 @@
 
 #include "SLevelLoadList.h"
 #include "SLevelButton.h"
+#include "Engine/ObjectLibrary.h"
 
 void SLevelLoadList::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
 
-	MapNames.Add("WeaponLevel", "WeaponsTest");
-	MapNames.Add("AirshipLevel", "AirshipTest");
-	MapNames.Add("UILevel", "UI_Test");
-
+	TArray<FString> LvlNames = GetFolderName("/Game/FirstPerson/Maps/Maps");
 	TSharedPtr<SVerticalBox> Container = SNew(SVerticalBox);
 
 	const FMargin ButtonPadding = FMargin(10.f);
 
-	for (auto It = MapNames.CreateConstIterator(); It; ++It)
+	for (auto& LvlName : LvlNames)
 	{
 		Container->AddSlot().Padding(ButtonPadding)
 			[
 				SNew(SLevelButton)
 					.OwningHUD(OwningHUD)
-					.LevelNameTitle(It.Key())
-					.LevelName(*It.Value())
+					.LevelName(FName(*LvlName))
 			];
 	}
 
@@ -31,4 +28,25 @@ void SLevelLoadList::Construct(const FArguments& InArgs)
 		[
 			Container.ToSharedRef()
 		];
+}
+
+TArray<FString> SLevelLoadList::GetFolderName(FString MapPath)
+{
+	auto ObjectLibrary = UObjectLibrary::CreateLibrary(UWorld::StaticClass(), false, true);
+	ObjectLibrary->LoadAssetDataFromPath(MapPath);
+	TArray<FAssetData> AssetDatas;
+	ObjectLibrary->GetAssetDataList(AssetDatas);
+
+	TArray<FString> Names = TArray<FString>();
+
+	for (int32 i = 0; i < AssetDatas.Num(); ++i)
+	{
+		FAssetData& AssetData = AssetDatas[i];
+
+		auto name = AssetData.AssetName.ToString();
+
+		Names.Add(name);
+	}
+
+	return Names;
 }
