@@ -12,6 +12,10 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 
+#include "Components/WidgetComponent.h"
+#include "WidgetTooltipComponent.h"
+#include "WidgetTooltips.h"
+
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,6 +23,8 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AAeroKingdom_AirshipsCharacter::AAeroKingdom_AirshipsCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
 	
@@ -40,22 +46,28 @@ AAeroKingdom_AirshipsCharacter::AAeroKingdom_AirshipsCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	TooltipWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Tooltip Widget"));
+	TooltipWidget->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	TooltipWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	TooltipWidget->SetDrawAtDesiredSize(true);
+	TooltipWidget->SetOnlyOwnerSee(true);
+	TooltipWidget->SetVisibility(true);
+
 }
 
 void AAeroKingdom_AirshipsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
 
-	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+void AAeroKingdom_AirshipsCharacter::Tick(float DeltaTime)
+{
+	if (LookingAt->IsValidLowLevel() && IsInteractable())
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
+		/* Update looking at world position*/
+		TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -109,9 +121,38 @@ void AAeroKingdom_AirshipsCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+	GetLookedAt();
+
 }
 
 void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
+{
+	GetMappedKeys(InteractAction);
+
+	if (IsInteractable()) {
+		InteractPossessable();
+	}
+	else {
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
+	}
+}
+
+FString AAeroKingdom_AirshipsCharacter::GetMappedKeys(UInputAction* QueryAction)
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			auto keys = Subsystem->QueryKeysMappedToAction(QueryAction);
+			if (!keys.IsEmpty()) {
+				return keys[0].ToString();
+			}
+		}
+	}
+	return "N/A";
+}
+
+void AAeroKingdom_AirshipsCharacter::GetLookedAt()
 {
 	FVector Start;
 	FVector End;
@@ -126,7 +167,7 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 	Start = PlayerEyesLoc;
 	End = PlayerEyesLoc + (PlayerEyesRot.Vector() * LineTraceDistance);
 
-	FCollisionQueryParams TraceParams(FName(TEXT("InteractTrace")), true, this);
+	FCollisionQueryParams TraceParams(FName(TEXT("LookAtTrace")), true, this);
 
 	FHitResult InteractHit = FHitResult(ForceInit);
 
@@ -138,41 +179,67 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel3);
 	ObjectTypeParams.AddObjectTypesToQuery(ECC_GameTraceChannel4);
 
-	//bool bIsHit = GetWorld()->LineTraceSingleByChannel(InteractHit, Start, End, ECC_GameTraceChannel3, TraceParams);
+	bool bShowTooltip = false;
 	bool bIsHit = GetWorld()->LineTraceSingleByObjectType(InteractHit, Start, End, ObjectTypeParams, TraceParams);
 	if (bIsHit && InteractHit.GetActor() != this) {
-		if (InteractHit.GetActor()->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Interactable!"));
-			//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.f, ECC_WorldStatic, 1.f);
-
-			/* see if the thing is already possessed */
-			IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(InteractHit.GetActor());
-			APawn* PossessAbleObj = Cast<APawn>(InteractHit.GetActor());
-			if (InteractableObj && PossessAbleObj && !InteractableObj->IsPossessed()) {
-				/* Save controller */
-				if (!SavedController) {
-					SavedController = GetController();
+		if (LookingAt != InteractHit.GetActor()) {
+			LookingAt = InteractHit.GetActor();
+			if (IsInteractable()) {
+				UWidgetTooltips* Tooltip = Cast<UWidgetTooltips>(TooltipWidget->GetUserWidgetObject());
+				if (Tooltip) {
+					Tooltip->SetKeyName("Press: " + GetMappedKeys(InteractAction));
+					TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
+					TooltipWidget->SetVisibility(true);
+					bShowTooltip = true;
 				}
-
-				/* unpossess current controller */
-				SavedController->UnPossess();
-				/* Disable state management on the possessed character */
-				/* Disable Movement */
-				//GetCharacterMovement()
-
-				/* Possess Character */
-				InteractableObj->Possess(this);
-				SavedController->Possess(PossessAbleObj);
-
-				/* Enable Movement */
 			}
 		}
 		else {
-			//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
+			bShowTooltip = true;
 		}
+		
 	}
-	else {
-		//DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 5.f, ECC_WorldStatic, 1.0f);
+
+
+	if(!bShowTooltip) {
+		LookingAt = nullptr;
+		TooltipWidget->SetVisibility(false);
+	}
+}
+
+bool AAeroKingdom_AirshipsCharacter::IsInteractable()
+{
+	if (LookingAt->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+		return true;
+	}
+	return false;
+}
+
+void AAeroKingdom_AirshipsCharacter::InteractPossessable()
+{
+	/* see if the thing is already possessed */
+	IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(LookingAt);
+	InteractableObj->SetKeyName(FText::FromString("Test"));
+
+	APawn* PossessAbleObj = Cast<APawn>(LookingAt);
+	if (InteractableObj && PossessAbleObj && !InteractableObj->IsPossessed()) {
+		/* Save controller */
+		if (!SavedController) {
+			SavedController = GetController();
+		}
+
+		/* unpossess current controller */
+		SavedController->UnPossess();
+		/* Disable state management on the possessed character */
+		/* Disable Movement */
+		//GetCharacterMovement()
+
+		/* Possess Character */
+		InteractableObj->Possess(this);
+		SavedController->Possess(PossessAbleObj);
+
+		/* Enable Movement */
+		InteractableObj->DebugKeyName();
 	}
 }
 

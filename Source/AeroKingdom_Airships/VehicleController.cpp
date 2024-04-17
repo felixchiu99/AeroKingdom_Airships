@@ -12,7 +12,7 @@
 // Sets default values
 AVehicleController::AVehicleController()
 {
-	// Create a cannon base for visualisation
+	// Create a base for visualisation
 	VehicleControllerBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ControllerBase"));
 	VehicleControllerBase->SetWorldRotation(FRotator(0.f, 0.f, 0.f));
 	VehicleControllerBase->SetupAttachment(GetRootComponent());
@@ -44,6 +44,14 @@ AVehicleController::AVehicleController()
 	ThirdPersonCameraComponent->AttachToComponent(CameraPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	ThirdPersonCameraComponent->bUsePawnControlRotation = false;
 	ThirdPersonCameraComponent->SetRelativeLocation(FVector(-300.f, 0.f, 0.f));
+	
+	/*
+	TooltipWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Tooltip Widget"));
+	TooltipWidget->AttachToComponent(VehicleControllerBase, FAttachmentTransformRules::KeepRelativeTransform);
+	TooltipWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	TooltipWidget->SetDrawAtDesiredSize(true);
+	*/
+	
 }
 
 // Called to bind functionality to input
@@ -76,6 +84,8 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 void AVehicleController::BeginPlay()
 {
 	Super::BeginPlay();
+	//UWidgetTooltips* Tooltips = Cast<UWidgetTooltips>(TooltipWidget->GetUserWidgetObject());
+	//Tooltips->SetToolTipInterface(Cast<UIToolTipInterface>(this));
 }
 
 void AVehicleController::Move(const FInputActionValue& Value)

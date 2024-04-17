@@ -51,6 +51,9 @@ public:
 protected:
 	virtual void BeginPlay();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 public:
 		
 	/** Look Input Action */
@@ -61,9 +64,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
 	bool bHasRifle;
 
+	AActor* LookingAt;
+
 	/* pointer to Saved Controller */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	AController* SavedController;
+
+	/* tooltip widget */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = UI)
+	class UWidgetComponent* TooltipWidget;
 
 	/** Setter to set the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
@@ -82,6 +91,18 @@ protected:
 
 	/** Called for Enter input */
 	void Interact(const FInputActionValue& Value);
+
+	/*Find Keybind for interaction keys*/
+	FString GetMappedKeys(UInputAction* QueryAction);
+
+	/* Store the Actor that is being looked at*/
+	void GetLookedAt();
+	
+	/* Test if Interactable */
+	bool IsInteractable();
+
+	/* Function to interact with Possessable*/
+	void InteractPossessable();
 
 protected:
 	// APawn interface

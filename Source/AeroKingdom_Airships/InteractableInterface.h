@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "IToolTipInterface.h"
 #include "InteractableInterface.generated.h"
 
 // This class does not need to be modified.
@@ -16,7 +17,7 @@ class UInteractableInterface : public UInterface
 /**
  * 
  */
-class AEROKINGDOM_AIRSHIPS_API IInteractableInterface
+class AEROKINGDOM_AIRSHIPS_API IInteractableInterface : public IIToolTipInterface
 {
 	GENERATED_BODY()
 

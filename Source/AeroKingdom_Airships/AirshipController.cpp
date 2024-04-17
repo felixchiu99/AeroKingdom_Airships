@@ -9,6 +9,7 @@
 
 AAirshipController::AAirshipController()
 {
+
 	VehicleControllerBase->SetCollisionProfileName(FName("ShipComponent"));
 }
 
