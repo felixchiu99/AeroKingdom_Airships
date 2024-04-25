@@ -9,7 +9,7 @@ void SLevelLoadList::Construct(const FArguments& InArgs)
 {
 	OwningHUD = InArgs._OwningHUD;
 
-	TArray<FString> LvlNames = GetFolderName("/Game/FirstPerson/Maps/Maps");
+	TArray<FString> LvlNames = GetFolderName("/Game/Maps/Prototypes");
 	TSharedPtr<SVerticalBox> Container = SNew(SVerticalBox);
 
 	const FMargin ButtonPadding = FMargin(10.f);

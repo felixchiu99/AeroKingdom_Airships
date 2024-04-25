@@ -26,6 +26,9 @@ public:
 	virtual void SetKeyName(FText Name);
 	virtual void DebugKeyName();
 
+	virtual FVector GetTooltipDisplayPoint();
+	virtual bool HasTooltipDisplayPoint();
+	virtual FText GetTooltipDisplayName();
 protected:
 
 	FText KeyName;

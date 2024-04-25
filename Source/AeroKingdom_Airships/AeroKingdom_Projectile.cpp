@@ -6,6 +6,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "GIAirshipGameInstance.h"
 
 // Sets default values
 AAeroKingdom_Projectile::AAeroKingdom_Projectile()
@@ -89,7 +90,9 @@ void AAeroKingdom_Projectile::PlayExplodeSound()
 	// Try and play the sound if specified
 	if (ExplosionSound != nullptr)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetTransform().GetLocation(), 1.f, 1.f, 0.0f, AudioSetting);
+		//float fSFXVolume = GetGameInstance<UGIAirshipGameInstance>()->GetSFXVolume();
+		//UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetTransform().GetLocation(), fSFXVolume, 1.f, 0.0f, AudioSetting);
+		GetGameInstance<UGIAirshipGameInstance>()->SSPlaySFXAtLocation(this, ExplosionSound, GetActorLocation(), GetActorRotation(), 1.f, 1.f, 0.0f, AudioSetting);
 	}
 }
 

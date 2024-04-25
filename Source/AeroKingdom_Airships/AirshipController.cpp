@@ -73,7 +73,7 @@ void AAirshipController::UpAxis(float input)
 		Airship->AxisUpward(input);
 }
 
-void AAirshipController::SetAirshipPointer(AAirship* ship)
+void AAirshipController::SetAirshipPointer(AASAirship* ship)
 {
 	this->Airship = ship;
 }

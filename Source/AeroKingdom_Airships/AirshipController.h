@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "VehicleController.h"
-#include "Airship.h"
+#include "ASAirship.h"
 #include "AirshipController.generated.h"
 
 /**
@@ -16,7 +16,7 @@ class AEROKINGDOM_AIRSHIPS_API AAirshipController : public AVehicleController
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Airship)
-	AAirship* Airship;
+	AASAirship* Airship;
 
 public:
 	// Sets default values for this pawn's properties
@@ -40,7 +40,7 @@ protected:
 	virtual void UpAxis(float input);
 
 public:
-	void SetAirshipPointer(AAirship* Airship);
+	void SetAirshipPointer(AASAirship* Airship);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "IToolTipInterface.h"
+//#include "IToolTipInterface.h"
 #include "WidgetTooltips.generated.h"
 
 /**

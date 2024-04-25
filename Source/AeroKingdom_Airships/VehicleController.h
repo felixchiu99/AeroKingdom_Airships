@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "InteractableInterface.h"
+#include "ASInteractablePawn.h"
 #include "VehicleController.generated.h"
 
 class UInputComponent;
@@ -15,7 +16,7 @@ class UArrowComponent;
 struct FInputActionValue;
 
 UCLASS()
-class AEROKINGDOM_AIRSHIPS_API AVehicleController : public APawn, public IInteractableInterface
+class AEROKINGDOM_AIRSHIPS_API AVehicleController : public AASInteractablePawn
 {
 	GENERATED_BODY()
 

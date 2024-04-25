@@ -41,6 +41,10 @@ class AAeroKingdom_AirshipsCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	/** Menu Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MenuAction;
+
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
@@ -64,16 +68,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon)
 	bool bHasRifle;
 
-	AActor* LookingAt;
-
-	/* pointer to Saved Controller */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	AController* SavedController;
-
-	/* tooltip widget */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = UI)
-	class UWidgetComponent* TooltipWidget;
-
 	/** Setter to set the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	void SetHasRifle(bool bNewHasRifle);
@@ -82,7 +76,42 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
 
+	/** Returns Mesh1P subobject **/
+	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	/** Returns FirstPersonCameraComponent subobject **/
+	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
 protected:
+
+
+	AActor* LookingAt;
+
+	/* pointer to Saved Controller */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	AController* SavedController;
+
+	/* ---UI--- */
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
+	TSubclassOf<class UUWTabMenu> TabMenuClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
+	class UUWTabMenu* TabMenuWidget;
+
+	bool bShowingTabMenu = false;
+
+	void ToggleTabMenu();
+
+	/* ---tooltip widget--- */
+	void UpdateTooltipLocation();
+
+	void UpdateTooltipLabel(class UWidgetTooltips* Tooltip);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = UI)
+	class UWidgetComponent* TooltipWidget;
+
+	/* ---Input--- */
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -91,6 +120,9 @@ protected:
 
 	/** Called for Enter input */
 	void Interact(const FInputActionValue& Value);
+
+	/** Called for open Tab Menu input */
+	void OpenTabMenu(const FInputActionValue& Value);
 
 	/*Find Keybind for interaction keys*/
 	FString GetMappedKeys(UInputAction* QueryAction);
@@ -104,16 +136,9 @@ protected:
 	/* Function to interact with Possessable*/
 	void InteractPossessable();
 
-protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
-
-public:
-	/** Returns Mesh1P subobject **/
-	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	/** Returns FirstPersonCameraComponent subobject **/
-	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
 };
 

@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Vehicle.h"
+#include "ASVehicle.h"
 #include "FloatingPawnTest.generated.h"
 
 class AAirshipController;
 class UFloatingPawnMovement;
 
 UCLASS()
-class AEROKINGDOM_AIRSHIPS_API AFloatingPawnTest : public AVehicle
+class AEROKINGDOM_AIRSHIPS_API AFloatingPawnTest : public AASVehicle
 {
 	GENERATED_BODY()
 

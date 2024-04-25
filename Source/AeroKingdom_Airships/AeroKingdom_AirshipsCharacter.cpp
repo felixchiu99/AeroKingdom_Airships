@@ -15,6 +15,7 @@
 #include "Components/WidgetComponent.h"
 #include "WidgetTooltipComponent.h"
 #include "WidgetTooltips.h"
+#include "UWTabMenu.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -59,6 +60,22 @@ void AAeroKingdom_AirshipsCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	// Only create the UI on the local machine (dose not excist on the server.)
+	if (IsLocalPlayerControllerViewingAPawn())
+	{
+		if (TabMenuClass) // Check the selected UI class is not NULL
+		{
+			if (!TabMenuWidget) // If the widget is not created and == NULL
+			{
+				TabMenuWidget = Cast<UUWTabMenu> (CreateWidget<UUserWidget>(GetWorld(), TabMenuClass)); // Create Widget
+				if (!TabMenuWidget)
+					return;
+				TabMenuWidget->AddToViewport(); // Add it to the viewport so the Construct() method in the UUserWidget:: is run.
+				TabMenuWidget->SetVisibility(ESlateVisibility::Hidden); // Set it to hidden so its not open on spawn.
+			}
+		}
+	}
 }
 
 void AAeroKingdom_AirshipsCharacter::Tick(float DeltaTime)
@@ -66,7 +83,8 @@ void AAeroKingdom_AirshipsCharacter::Tick(float DeltaTime)
 	if (LookingAt->IsValidLowLevel() && IsInteractable())
 	{
 		/* Update looking at world position*/
-		TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
+		//TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
+		UpdateTooltipLocation();
 	}
 }
 
@@ -89,6 +107,9 @@ void AAeroKingdom_AirshipsCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 		// Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AAeroKingdom_AirshipsCharacter::Interact);
+		
+		// Menu
+		EnhancedInputComponent->BindAction(MenuAction, ETriggerEvent::Started, this, &AAeroKingdom_AirshipsCharacter::OpenTabMenu);
 	}
 	else
 	{
@@ -96,6 +117,32 @@ void AAeroKingdom_AirshipsCharacter::SetupPlayerInputComponent(UInputComponent* 
 	}
 }
 
+
+void AAeroKingdom_AirshipsCharacter::ToggleTabMenu()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("hi "));
+	if (TabMenuWidget)
+		TabMenuWidget->ToggleMenu();
+}
+
+void AAeroKingdom_AirshipsCharacter::UpdateTooltipLocation()
+{
+	IInteractableInterface* Interactable = Cast<IInteractableInterface>(LookingAt);
+	if (Interactable == nullptr)
+		return;
+	if (Interactable->HasTooltipDisplayPoint()) {
+		TooltipWidget->SetWorldLocation(Interactable->GetTooltipDisplayPoint());
+	}
+	else {
+		TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
+	}
+}
+
+void AAeroKingdom_AirshipsCharacter::UpdateTooltipLabel(UWidgetTooltips* Tooltip)
+{
+	IInteractableInterface* Interactable = Cast<IInteractableInterface>(LookingAt);
+	Tooltip->SetKeyName(Interactable->GetTooltipDisplayName().ToString() + " : " + GetMappedKeys(InteractAction));
+}
 
 void AAeroKingdom_AirshipsCharacter::Move(const FInputActionValue& Value)
 {
@@ -135,6 +182,11 @@ void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)
 	else {
 		//DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 5.f, ECC_WorldStatic, 1.0f);
 	}
+}
+
+void AAeroKingdom_AirshipsCharacter::OpenTabMenu(const FInputActionValue& Value)
+{
+	ToggleTabMenu();
 }
 
 FString AAeroKingdom_AirshipsCharacter::GetMappedKeys(UInputAction* QueryAction)
@@ -187,8 +239,9 @@ void AAeroKingdom_AirshipsCharacter::GetLookedAt()
 			if (IsInteractable()) {
 				UWidgetTooltips* Tooltip = Cast<UWidgetTooltips>(TooltipWidget->GetUserWidgetObject());
 				if (Tooltip) {
-					Tooltip->SetKeyName("Press: " + GetMappedKeys(InteractAction));
-					TooltipWidget->SetWorldLocation(LookingAt->GetActorLocation());
+					UpdateTooltipLabel(Tooltip);
+					//Tooltip->SetKeyName("test : " + GetMappedKeys(InteractAction));
+					UpdateTooltipLocation();
 					TooltipWidget->SetVisibility(true);
 					bShowTooltip = true;
 				}
@@ -209,6 +262,8 @@ void AAeroKingdom_AirshipsCharacter::GetLookedAt()
 
 bool AAeroKingdom_AirshipsCharacter::IsInteractable()
 {
+	if (!LookingAt)
+		return false;
 	if (LookingAt->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
 		return true;
 	}

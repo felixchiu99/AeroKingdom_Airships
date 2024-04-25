@@ -45,6 +45,9 @@ AVehicleController::AVehicleController()
 	ThirdPersonCameraComponent->bUsePawnControlRotation = false;
 	ThirdPersonCameraComponent->SetRelativeLocation(FVector(-300.f, 0.f, 0.f));
 	
+	// Attach Tooltip Display to Component
+	TooltipDisplayPoint->SetupAttachment(VehicleControllerBase);
+
 	/*
 	TooltipWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Tooltip Widget"));
 	TooltipWidget->AttachToComponent(VehicleControllerBase, FAttachmentTransformRules::KeepRelativeTransform);
