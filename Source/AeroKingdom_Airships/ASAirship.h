@@ -6,7 +6,7 @@
 #include "ASVehicle.h"
 #include "ASAirship.generated.h"
 
-class AAirshipController;
+class AASPIAirshipController;
 class UArrowComponent;
 /**
  * 
@@ -24,7 +24,7 @@ class AEROKINGDOM_AIRSHIPS_API AASAirship : public AASVehicle
 		UStaticMeshComponent* ShipBase;
 
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component-Cannon", meta = (OnlyPlaceable, AllowPrivateAccess = "true"))
-		TSubclassOf<AAirshipController>	ACAttachmentType;
+		TSubclassOf<AASPIAirshipController>	ACAttachmentType;
 
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AirshipController", meta = (AllowPrivateAccess = "true", AllowedClasses = "Cannon"))
 		class UChildActorComponent* AirshipController;

@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VehicleController.h"
+#include "ASPIVehicleController.h"
 #include "ASAirship.h"
-#include "AirshipController.generated.h"
+#include "ASPIAirshipController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AEROKINGDOM_AIRSHIPS_API AAirshipController : public AVehicleController
+class AEROKINGDOM_AIRSHIPS_API AASPIAirshipController : public AASPIVehicleController
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,7 @@ class AEROKINGDOM_AIRSHIPS_API AAirshipController : public AVehicleController
 
 public:
 	// Sets default values for this pawn's properties
-	AAirshipController();
+	AASPIAirshipController();
 
 protected:
 	// Called when the game starts or when spawned

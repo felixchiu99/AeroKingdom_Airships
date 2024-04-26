@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Input/Reply.h"
 #include "UWTabMenu.generated.h"
 
-/**
- * 
- */
+class UInputAction;
+
 UCLASS(Abstract)
 class AEROKINGDOM_AIRSHIPS_API UUWTabMenu : public UUserWidget
 {
@@ -39,6 +39,10 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitBtn;
 
+	/** Menu Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* MenuAction;
+
 	UFUNCTION()
 	void OnResumeClicked();
 
@@ -54,10 +58,13 @@ protected:
 	UFUNCTION()
 	void OnQuitClicked();
 
+	bool IsKeyDown(FKey Pressed, UInputAction* RelatedAction);
+
+	FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
 	TSubclassOf<class UUWSettingsMenu> SettingMenuClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI)
 	class UUWSettingsMenu* SettingMenuWidget;
 
 	bool bShowingMenu = false;

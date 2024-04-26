@@ -8,8 +8,7 @@
 #include "UWCommonSlider.h"
 #include "GIAirshipGameInstance.h"
 
-void UUWSettingsMenu::OpenMenu(UUserWidget* InMenu)
-{
+void UUWSettingsMenu::OpenMenu(UUserWidget* InMenu){
 	SetPreviousMenu(InMenu);
 	//SetVisibility(ESlateVisibility::Visible);
 	APlayerController* PC = GetOwningPlayer();
@@ -18,12 +17,14 @@ void UUWSettingsMenu::OpenMenu(UUserWidget* InMenu)
 	PC->bShowMouseCursor = true;
 	PC->bEnableClickEvents = true;
 	PC->bEnableMouseOverEvents = true;
-	PC->SetInputMode(FInputModeUIOnly());
+	PC->SetInputMode(FInputModeGameAndUI());
+	SetKeyboardFocus();
 	SetVisibility(ESlateVisibility::Visible);
 }
 
 void UUWSettingsMenu::NativeConstruct()
 {
+	SetIsFocusable(true);
 	BackBtn->OnClicked.AddDynamic(this, &ThisClass::OnBackBtnClicked);
 
 	MusicSlider->OnChangedDelegate.AddUniqueDynamic(this, &ThisClass::OnCommonSliderChanged);

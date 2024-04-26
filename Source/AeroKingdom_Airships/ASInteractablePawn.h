@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "InteractableInterface.h"
+#include "ASIInteractableInterface.h"
 #include "ASInteractablePawn.generated.h"
 
 UCLASS()
-class AEROKINGDOM_AIRSHIPS_API AASInteractablePawn : public APawn, public IInteractableInterface
+class AEROKINGDOM_AIRSHIPS_API AASInteractablePawn : public APawn, public IASIInteractableInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +23,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Tooltip")
 	FText TooltipLabelText = NSLOCTEXT("Tooltip", "ActionLabel", "Press");
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Tooltip")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI|Tooltip")
 	class UArrowComponent* TooltipDisplayPoint;
 };

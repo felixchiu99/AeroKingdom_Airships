@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "InteractableInterface.h"
 #include "ASInteractablePawn.h"
-#include "VehicleController.generated.h"
+#include "ASPIVehicleController.generated.h"
 
 class UInputComponent;
 class UInputMappingContext;
@@ -16,7 +15,7 @@ class UArrowComponent;
 struct FInputActionValue;
 
 UCLASS()
-class AEROKINGDOM_AIRSHIPS_API AVehicleController : public AASInteractablePawn
+class AEROKINGDOM_AIRSHIPS_API AASPIVehicleController : public AASInteractablePawn
 {
 	GENERATED_BODY()
 
@@ -60,7 +59,7 @@ protected:
 
 public:
 	// Sets default values for this pawn's properties
-	AVehicleController();
+	AASPIVehicleController();
 
 protected:
 	// Called when the game starts or when spawned

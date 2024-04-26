@@ -6,7 +6,7 @@
 #include "ASVehicle.h"
 #include "FloatingPawnTest.generated.h"
 
-class AAirshipController;
+class AASPIAirshipController;
 class UFloatingPawnMovement;
 
 UCLASS()
@@ -24,7 +24,7 @@ class AEROKINGDOM_AIRSHIPS_API AFloatingPawnTest : public AASVehicle
 	UStaticMeshComponent* ShipBase;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ChildActorComponent, meta = (OnlyPlaceable, AllowPrivateAccess = "true"))
-	TSubclassOf<AAirshipController>	ACAttachmentType;
+	TSubclassOf<AASPIAirshipController>	ACAttachmentType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AirshipController", meta = (AllowPrivateAccess = "true", AllowedClasses = "Cannon"))
 	class UChildActorComponent* AirshipController;

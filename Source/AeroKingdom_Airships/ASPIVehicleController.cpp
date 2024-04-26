@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "VehicleController.h"
+#include "ASPIVehicleController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
@@ -10,7 +10,7 @@
 #include "InputActionValue.h"
 
 // Sets default values
-AVehicleController::AVehicleController()
+AASPIVehicleController::AASPIVehicleController()
 {
 	// Create a base for visualisation
 	VehicleControllerBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ControllerBase"));
@@ -58,7 +58,7 @@ AVehicleController::AVehicleController()
 }
 
 // Called to bind functionality to input
-void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AASPIVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if (auto PlayerController = Cast<APlayerController>(Controller))
@@ -73,32 +73,32 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AVehicleController::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AASPIVehicleController::Move);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AVehicleController::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AASPIVehicleController::Look);
 
 		// Interact
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AVehicleController::Interact);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AASPIVehicleController::Interact);
 	}
 
 }
 
-void AVehicleController::BeginPlay()
+void AASPIVehicleController::BeginPlay()
 {
 	Super::BeginPlay();
 	//UWidgetTooltips* Tooltips = Cast<UWidgetTooltips>(TooltipWidget->GetUserWidgetObject());
 	//Tooltips->SetToolTipInterface(Cast<UIToolTipInterface>(this));
 }
 
-void AVehicleController::Move(const FInputActionValue& Value)
+void AASPIVehicleController::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, MoveAxisVector.ToString());
 }
 
-void AVehicleController::Look(const FInputActionValue& Value)
+void AASPIVehicleController::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -122,7 +122,7 @@ void AVehicleController::Look(const FInputActionValue& Value)
 	}
 }
 
-void AVehicleController::MoveCharacter()
+void AASPIVehicleController::MoveCharacter()
 {
 	PossessedChar->SetActorLocation(ExitPoint->GetComponentLocation());
 	FVector Rotation = ExitPoint->GetComponentRotation().Euler();
@@ -131,7 +131,7 @@ void AVehicleController::MoveCharacter()
 
 }
 
-void AVehicleController::Interact(const FInputActionValue& Value)
+void AASPIVehicleController::Interact(const FInputActionValue& Value)
 {
 	/* Return to character */
 	AController* controller = GetController();

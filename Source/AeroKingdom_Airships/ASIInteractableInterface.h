@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "IToolTipInterface.h"
-#include "InteractableInterface.generated.h"
+#include "ASIToolTipInterface.h"
+#include "ASIInteractableInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UInteractableInterface : public UInterface
+class UASIInteractableInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class UInteractableInterface : public UInterface
 /**
  * 
  */
-class AEROKINGDOM_AIRSHIPS_API IInteractableInterface : public IIToolTipInterface
+class AEROKINGDOM_AIRSHIPS_API IASIInteractableInterface : public IASIToolTipInterface
 {
 	GENERATED_BODY()
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
-#include "IToolTipInterface.h"
+#include "ASIToolTipInterface.h"
 #include "WidgetTooltipComponent.generated.h"
 
 /**
@@ -18,7 +18,7 @@ class AEROKINGDOM_AIRSHIPS_API UWidgetTooltipComponent : public UWidgetComponent
 public:
 	UWidgetTooltipComponent();
 
-	void SetToolTipInterface(UIToolTipInterface* InInterface)
+	void SetToolTipInterface(UASIToolTipInterface* InInterface)
 	{
 		ToolTipInterfaceObject = InInterface;
 	}
@@ -26,6 +26,6 @@ public:
 protected:
 	void SetVisible(bool bIsVisible);
 
-	TWeakObjectPtr<UIToolTipInterface> ToolTipInterfaceObject;
+	TWeakObjectPtr<UASIToolTipInterface> ToolTipInterfaceObject;
 
 };

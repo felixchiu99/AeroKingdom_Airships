@@ -8,7 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "InteractableInterface.h"
+#include "ASIInteractableInterface.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 
@@ -127,7 +127,7 @@ void AAeroKingdom_AirshipsCharacter::ToggleTabMenu()
 
 void AAeroKingdom_AirshipsCharacter::UpdateTooltipLocation()
 {
-	IInteractableInterface* Interactable = Cast<IInteractableInterface>(LookingAt);
+	IASIInteractableInterface* Interactable = Cast<IASIInteractableInterface>(LookingAt);
 	if (Interactable == nullptr)
 		return;
 	if (Interactable->HasTooltipDisplayPoint()) {
@@ -140,7 +140,7 @@ void AAeroKingdom_AirshipsCharacter::UpdateTooltipLocation()
 
 void AAeroKingdom_AirshipsCharacter::UpdateTooltipLabel(UWidgetTooltips* Tooltip)
 {
-	IInteractableInterface* Interactable = Cast<IInteractableInterface>(LookingAt);
+	IASIInteractableInterface* Interactable = Cast<IASIInteractableInterface>(LookingAt);
 	Tooltip->SetKeyName(Interactable->GetTooltipDisplayName().ToString() + " : " + GetMappedKeys(InteractAction));
 }
 
@@ -264,7 +264,7 @@ bool AAeroKingdom_AirshipsCharacter::IsInteractable()
 {
 	if (!LookingAt)
 		return false;
-	if (LookingAt->GetClass()->ImplementsInterface(UInteractableInterface::StaticClass())) {
+	if (LookingAt->GetClass()->ImplementsInterface(UASIInteractableInterface::StaticClass())) {
 		return true;
 	}
 	return false;
@@ -273,7 +273,7 @@ bool AAeroKingdom_AirshipsCharacter::IsInteractable()
 void AAeroKingdom_AirshipsCharacter::InteractPossessable()
 {
 	/* see if the thing is already possessed */
-	IInteractableInterface* InteractableObj = Cast<IInteractableInterface>(LookingAt);
+	IASIInteractableInterface* InteractableObj = Cast<IASIInteractableInterface>(LookingAt);
 	InteractableObj->SetKeyName(FText::FromString("Test"));
 
 	APawn* PossessAbleObj = Cast<APawn>(LookingAt);

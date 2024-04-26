@@ -2,7 +2,7 @@
 
 
 #include "ASAirship.h"
-#include "AirshipController.h"
+#include "ASPIAirshipController.h"
 #include "Components/ArrowComponent.h"
 
 AASAirship::AASAirship()
@@ -49,7 +49,7 @@ AASAirship::AASAirship()
 void AASAirship::BeginPlay()
 {
 	Super::BeginPlay();
-	AAirshipController* ASControl = Cast<AAirshipController>(AirshipController->GetChildActor());
+	AASPIAirshipController* ASControl = Cast<AASPIAirshipController>(AirshipController->GetChildActor());
 	ASControl->SetAirshipPointer(this);
 	fHeight = GetActorLocation().Z;
 }

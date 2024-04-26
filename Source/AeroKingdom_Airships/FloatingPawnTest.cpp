@@ -2,7 +2,7 @@
 
 
 #include "FloatingPawnTest.h"
-#include "AirshipController.h"
+#include "ASPIAirshipController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
 // Sets default values

@@ -6,11 +6,14 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "InputActionValue.h"
+#include "EnhancedInputSubsystems.h"
 
 void UUWTabMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
-	bIsFocusable = true;
+	SetIsFocusable(true);
+
 	ResumeBtn->OnClicked.AddDynamic(this, &ThisClass::OnResumeClicked);
 	MainMenuBtn->OnClicked.AddDynamic(this, &ThisClass::OnMainMenuClicked);
 	SettingBtn->OnClicked.AddDynamic(this, &ThisClass::OnSettingClicked);
@@ -37,11 +40,13 @@ void UUWTabMenu::ToggleMenu()
 	if (bShowingMenu)
 	{
 		UGameplayStatics::SetGamePaused(GetWorld(), true);
+		
 		PC->bShowMouseCursor = true;
 		PC->bEnableClickEvents = true;
 		PC->bEnableMouseOverEvents = true;
 		PC->SetInputMode(FInputModeUIOnly());
 		SetKeyboardFocus();
+		
 		SetVisibility(ESlateVisibility::Visible);
 	}
 	else {
@@ -53,6 +58,17 @@ void UUWTabMenu::ToggleMenu()
 		SetKeyboardFocus();
 		SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+FReply UUWTabMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Key pressed " + InKeyEvent.GetKey().GetDisplayName().ToString()));
+	
+	if (IsKeyDown(InKeyEvent.GetKey(), MenuAction)) {
+		OnResumeClicked();
+	}
+
+	return FReply::Handled();
 }
 
 void UUWTabMenu::OnResumeClicked()
@@ -82,4 +98,19 @@ void UUWTabMenu::OnQuitClicked()
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Quit"));
 	UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, false);
+}
+
+bool UUWTabMenu::IsKeyDown(FKey Pressed, UInputAction* RelatedAction)
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetOwningPlayer()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			auto keys = Subsystem->QueryKeysMappedToAction(RelatedAction);
+			if (!keys.IsEmpty()) {
+				return keys.Find(Pressed) != INDEX_NONE;
+			}
+		}
+	}
+	return false;
 }

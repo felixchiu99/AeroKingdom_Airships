@@ -50,6 +50,5 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UUWCommonSlider* AmbientSlider;
 
-	UPROPERTY()
 	class UUserWidget* PreviousMenu;
 };

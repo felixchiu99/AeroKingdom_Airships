@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "ASInteractablePawn.h"
-#include "InteractableInterface.h"
 #include "Logging/LogMacros.h"
 #include "ASTurret.generated.h"
 

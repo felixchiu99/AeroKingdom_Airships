@@ -1,24 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AirshipController.h"
+#include "ASPIAirshipController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
 
-AAirshipController::AAirshipController()
+AASPIAirshipController::AASPIAirshipController()
 {
 
 	VehicleControllerBase->SetCollisionProfileName(FName("ShipComponent"));
 }
 
-void AAirshipController::BeginPlay()
+void AASPIAirshipController::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AAirshipController::Move(const FInputActionValue& Value)
+void AASPIAirshipController::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MoveAxisVector = Value.Get<FVector2D>();
@@ -30,7 +30,7 @@ void AAirshipController::Move(const FInputActionValue& Value)
 	
 }
 
-void AAirshipController::Lift(const FInputActionValue& Value)
+void AASPIAirshipController::Lift(const FInputActionValue& Value)
 {
 	float Lift = Value.Get<float>();
 	if (Airship) {
@@ -38,7 +38,7 @@ void AAirshipController::Lift(const FInputActionValue& Value)
 	}
 }
 
-void AAirshipController::ThrustAxis(float input)
+void AASPIAirshipController::ThrustAxis(float input)
 {
 	///*
 	if (input > 0) {
@@ -53,7 +53,7 @@ void AAirshipController::ThrustAxis(float input)
 
 }
 
-void AAirshipController::YawAxis(float input)
+void AASPIAirshipController::YawAxis(float input)
 {
 	/*
 	if (input > 0) {
@@ -67,32 +67,32 @@ void AAirshipController::YawAxis(float input)
 		Airship->Yaw(input);
 }
 
-void AAirshipController::UpAxis(float input)
+void AASPIAirshipController::UpAxis(float input)
 {
 	if (input != 0)
 		Airship->AxisUpward(input);
 }
 
-void AAirshipController::SetAirshipPointer(AASAirship* ship)
+void AASPIAirshipController::SetAirshipPointer(AASAirship* ship)
 {
 	this->Airship = ship;
 }
 
-void AAirshipController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AASPIAirshipController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Lift
-		EnhancedInputComponent->BindAction(LiftAction, ETriggerEvent::Triggered, this, &AAirshipController::Lift);
+		EnhancedInputComponent->BindAction(LiftAction, ETriggerEvent::Triggered, this, &AASPIAirshipController::Lift);
 	}
 }
 
-void AAirshipController::SetSteeringPos(float input)
+void AASPIAirshipController::SetSteeringPos(float input)
 {
 }
 
-void AAirshipController::SetThrottlePos(float input)
+void AASPIAirshipController::SetThrottlePos(float input)
 {
 }

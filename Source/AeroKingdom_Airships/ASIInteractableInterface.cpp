@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InteractableInterface.h"
+#include "ASIInteractableInterface.h"
 
 // Add default functionality here for any IInteractableInterface functions that are not pure virtual.
 
-void IInteractableInterface::Possess(APawn* PossessingChar)
+void IASIInteractableInterface::Possess(APawn* PossessingChar)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, ( PossessingChar==nullptr ? "True" : "False"));
 	PossessedChar = PossessingChar;
@@ -13,7 +13,7 @@ void IInteractableInterface::Possess(APawn* PossessingChar)
 	bIsCurrentlyPossessed = true;
 }
 
-void IInteractableInterface::UnPossess(AController* SavedController)
+void IASIInteractableInterface::UnPossess(AController* SavedController)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, (SavedController == nullptr ? "True" : "False"));
 	/* Unpossess current controller */
@@ -31,16 +31,16 @@ void IInteractableInterface::UnPossess(AController* SavedController)
 	}
 }
 
-bool IInteractableInterface::IsPossessed()
+bool IASIInteractableInterface::IsPossessed()
 {
 	return bIsCurrentlyPossessed;
 }
 
-void IInteractableInterface::MoveCharacter()
+void IASIInteractableInterface::MoveCharacter()
 {
 }
 
-void IInteractableInterface::EnableCharacter(bool enabled)
+void IASIInteractableInterface::EnableCharacter(bool enabled)
 {
 	PossessedChar->SetActorTickEnabled(enabled);
 	PossessedChar->SetActorHiddenInGame(!enabled);

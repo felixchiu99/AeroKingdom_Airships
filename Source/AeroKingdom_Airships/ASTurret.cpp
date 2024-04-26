@@ -125,7 +125,7 @@ void AASTurret::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(DefaultMappingContext, 3);
 		}
 	}
 	// Set up action bindings
