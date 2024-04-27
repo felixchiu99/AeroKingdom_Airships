@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ASVehicle.h"
+#include "../ASVehicle.h"
 #include "FloatingPawnTest.generated.h"
 
 class AASPIAirshipController;

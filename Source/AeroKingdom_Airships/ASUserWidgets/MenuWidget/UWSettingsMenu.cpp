@@ -5,8 +5,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Slider.h"
-#include "UWCommonSlider.h"
-#include "GIAirshipGameInstance.h"
+#include "../ComponentWidget/UWCommonSlider.h"
+#include "../../GIAirshipGameInstance.h"
 
 void UUWSettingsMenu::OpenMenu(UUserWidget* InMenu){
 	SetPreviousMenu(InMenu);

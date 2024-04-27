@@ -2,7 +2,7 @@
 
 
 #include "UWLevelSelectMenu.h"
-#include "UWCommonLevelLoadButton.h"
+#include "../ComponentWidget/UWCommonLevelLoadButton.h"
 
 void UUWLevelSelectMenu::NativeConstruct()
 {

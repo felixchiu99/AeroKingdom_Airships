@@ -15,7 +15,7 @@
 #include "Components/WidgetComponent.h"
 #include "WidgetTooltipComponent.h"
 #include "WidgetTooltips.h"
-#include "UWTabMenu.h"
+#include "ASUserWidgets/MenuWidget/UWTabMenu.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
