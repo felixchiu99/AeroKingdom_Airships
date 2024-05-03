@@ -100,17 +100,11 @@ protected:
 	/** Called for StopFire function*/
 	void StopFire();
 
-	/** Called for Fire input */
-	void Fire(const FInputActionValue& Value);
-
 	/** Called for Turn the turret Left */
 	void RotateLeft();
 
 	/** Called for Turn the turret Right */
 	void RotateRight();
-
-	/** Called for Turn the turret*/
-	void RotateBase(const float input);
 
 	/** Called for Turn the turret Up */
 	void RotateUp();
@@ -118,11 +112,24 @@ protected:
 	/** Called for Turn the turret Down */
 	void RotateDown();
 
+	void MoveCharacter() override;
+
+public:
+	/** Called for Turn the turret*/
+	void RotateBase(const float input);
+
 	/** Called for Elevate the turret*/
 	void RotateElevation(const float input);
 
-	void MoveCharacter() override;
-	
+	/* return the aiming forward Vector*/
+	FVector GetAimingVector();
+
+	/* return the Vector pointing to Target*/
+	FVector GetTargetVector(FVector TargetLocation);
+
+	/** Called for Fire input */
+	void Fire();
+
 protected:
 	/** FVector2D for Cannon Azimuth (Left/Right) Arc*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cannon Attributes", meta = (EditCondition = "bLimitAzimuth", EditConditionHides))

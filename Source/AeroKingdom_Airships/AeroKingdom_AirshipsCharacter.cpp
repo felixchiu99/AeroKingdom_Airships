@@ -283,15 +283,17 @@ void AAeroKingdom_AirshipsCharacter::InteractPossessable()
 			SavedController = GetController();
 		}
 
+
+
 		/* unpossess current controller */
-		SavedController->UnPossess();
+		//SavedController->UnPossess();
 		/* Disable state management on the possessed character */
 		/* Disable Movement */
 		//GetCharacterMovement()
 
 		/* Possess Character */
-		InteractableObj->Possess(this);
-		SavedController->Possess(PossessAbleObj);
+		InteractableObj->Possess(this, SavedController);
+		//SavedController->Possess(PossessAbleObj);
 
 		/* Enable Movement */
 		InteractableObj->DebugKeyName();

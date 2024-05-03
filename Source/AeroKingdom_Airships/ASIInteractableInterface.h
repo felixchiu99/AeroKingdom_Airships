@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "ASIToolTipInterface.h"
+#include "AIController.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "ASIInteractableInterface.generated.h"
 
 // This class does not need to be modified.
@@ -23,7 +25,7 @@ class AEROKINGDOM_AIRSHIPS_API IASIInteractableInterface : public IASIToolTipInt
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Possess(APawn* PossessingChar);
+	virtual void Possess(APawn* PossessingChar, AController* PossessingController);
 
 	virtual void UnPossess(AController* SavedController);
 
@@ -35,6 +37,10 @@ protected:
 	virtual void EnableCharacter(bool enabled);
 
 	APawn* PossessedChar;
+
+	AController* PrevController;
+
+	AAIController* PrevAIController;
 
 	bool bIsCurrentlyPossessed = false;
 };

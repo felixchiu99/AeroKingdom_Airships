@@ -20,6 +20,14 @@ public:
 	bool HasTooltipDisplayPoint() override;
 	FText GetTooltipDisplayName() override;
 
+	void Possess(APawn* PossessingChar, AController* PossessingController) override;
+	void UnPossess(AController* SavedController) override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UBehaviorTree* DefaultBehaviorTree;
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Tooltip")
 	FText TooltipLabelText = NSLOCTEXT("Tooltip", "ActionLabel", "Press");
 

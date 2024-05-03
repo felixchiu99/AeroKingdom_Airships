@@ -179,9 +179,10 @@ void AASTurret::StopFire()
 	((AASCannon*)Cannon->GetChildActor())->StopFire();
 }
 
-void AASTurret::Fire(const FInputActionValue& Value)
+void AASTurret::Fire()
 {
-	((AASCannon*)Cannon->GetChildActor())->Fire();
+	StartFire();
+	StopFire();
 }
 
 void AASTurret::RotateLeft()
@@ -219,6 +220,17 @@ void AASTurret::RotateElevation(const float input)
 	BodyRotation.Pitch += input;
 	BodyRotation.Pitch = FMath::Clamp(BodyRotation.Pitch, CannonElevation.X, CannonElevation.Y);
 	CannonPivot->SetRelativeRotation(BodyRotation);
+}
+
+FVector AASTurret::GetAimingVector()
+{
+	return CannonPivot->GetForwardVector();
+}
+
+FVector AASTurret::GetTargetVector(FVector TargetLocation)
+{
+
+	return TargetLocation - CannonPivot->GetComponentLocation();
 }
 
 void AASTurret::MoveCharacter()

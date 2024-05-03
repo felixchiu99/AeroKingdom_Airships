@@ -5,30 +5,12 @@
 
 // Add default functionality here for any IInteractableInterface functions that are not pure virtual.
 
-void IASIInteractableInterface::Possess(APawn* PossessingChar)
+void IASIInteractableInterface::Possess(APawn* PossessingChar, AController* PossessingController)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, ( PossessingChar==nullptr ? "True" : "False"));
-	PossessedChar = PossessingChar;
-	EnableCharacter(false);
-	bIsCurrentlyPossessed = true;
 }
 
 void IASIInteractableInterface::UnPossess(AController* SavedController)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, (SavedController == nullptr ? "True" : "False"));
-	/* Unpossess current controller */
-	if (SavedController)
-	{
-		SavedController->UnPossess();
-		bIsCurrentlyPossessed = false;
-	}
-
-	/* Possess Character */
-	if (PossessedChar) {
-		MoveCharacter();
-		EnableCharacter(true);
-		SavedController->Possess(PossessedChar);
-	}
 }
 
 bool IASIInteractableInterface::IsPossessed()
