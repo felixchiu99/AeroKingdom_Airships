@@ -11,7 +11,7 @@ EBTNodeResult::Type UASBTT_GetNextTargetFromArray::ExecuteTask(UBehaviorTreeComp
 
     Controller->GetPawn()->GetComponentByClass(AILocationComponent);
 
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("InNext "));
+    //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("InNext "));
     AASTurret* turret = Cast<AASTurret>(Controller->GetPawn());
 
     turret->Fire();

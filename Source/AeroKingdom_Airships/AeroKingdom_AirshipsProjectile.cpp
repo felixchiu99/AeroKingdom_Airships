@@ -3,6 +3,8 @@
 #include "AeroKingdom_AirshipsProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "ASDamageable/ASA_DamageableActor.h"
+#include "ASComponents/ASAC_DurabilityComponent.h"
 
 AAeroKingdom_AirshipsProjectile::AAeroKingdom_AirshipsProjectile() 
 {
@@ -41,3 +43,26 @@ void AAeroKingdom_AirshipsProjectile::OnHit(UPrimitiveComponent* HitComp, AActor
 		Destroy();
 	}
 }
+
+bool AAeroKingdom_AirshipsProjectile::IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp)
+{
+	return (OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr);
+}
+
+
+bool AAeroKingdom_AirshipsProjectile::HasDurability(AActor* OtherActor)
+{
+	AASA_DamageableActor* DamageableObj = GetDurabilityComponent(OtherActor);
+	return DamageableObj != nullptr;
+}
+
+AASA_DamageableActor* AAeroKingdom_AirshipsProjectile::GetDurabilityComponent(AActor * OtherActor)
+{
+	UASAC_DurabilityComponent* DamageableComponent = Cast<UASAC_DurabilityComponent>(OtherActor->GetComponentByClass<UASAC_DurabilityComponent>());
+	if (!DamageableComponent) {
+		return nullptr;
+	}
+	AASA_DamageableActor* DamageableObj = Cast<AASA_DamageableActor>(DamageableComponent->GetOwner());
+	return DamageableObj;
+}
+

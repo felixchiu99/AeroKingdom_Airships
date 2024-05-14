@@ -9,6 +9,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UNiagaraSystem;
+class AASA_DamageableActor;
 
 UCLASS(config = Game)
 class AAeroKingdom_Projectile : public AActor
@@ -54,6 +55,12 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	/** Returns CollisionComp subobject **/
+	USphereComponent* GetCollisionComp() const { return CollisionComp; }
+	/** Returns ProjectileMovement subobject **/
+	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+protected:
 	/** Pass Explosion On Explosion animation */
 	UFUNCTION()
 	void OnExplode();
@@ -70,12 +77,28 @@ public:
 	UFUNCTION()
 	void PlayExplodeSound();
 
-	/** Returns CollisionComp subobject **/
-	USphereComponent* GetCollisionComp() const { return CollisionComp; }
-	/** Returns ProjectileMovement subobject **/
-	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+	//Check general Valid hit target
+	bool IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp);
+
+	/** Durability adoptability related**/
+
+	void AddDamage(AActor* OtherActor);
+
+	bool HasDurability(AActor* OtherActor);
+
+	//Return Durability component
+	AASA_DamageableActor* GetDurabilityComponent(AActor* OtherActor);
+
+	// Calculate Damage
+	float CalculateDamage();
+
+protected:
 
 	// Auto Explode Timer
 	UPROPERTY(EditAnywhere)
 	float fExplodeTimer = 2.f;
+
+	//Base Damage to be Dealt
+	UPROPERTY(EditAnywhere)
+	float fBaseDamage = 10.0f;
 };

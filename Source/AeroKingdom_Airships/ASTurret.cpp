@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "ASCannon.h"
+#include "ASComponents/ASAC_TurretTargetList.h"
 
 // Sets default values
 AASTurret::AASTurret()
@@ -101,6 +102,9 @@ AASTurret::AASTurret()
 
 	// Attach Tooltip Display to Component
 	TooltipDisplayPoint->SetupAttachment(CannonStand);
+
+
+	TargetList = CreateOptionalDefaultSubobject<UASAC_TurretTargetList>(TEXT("TargetList"));
 }
 
 // Called when the game starts or when spawned
@@ -183,6 +187,11 @@ void AASTurret::Fire()
 {
 	StartFire();
 	StopFire();
+}
+
+UASAC_TurretTargetList* AASTurret::GetTargetList()
+{
+	return TargetList;
 }
 
 void AASTurret::RotateLeft()

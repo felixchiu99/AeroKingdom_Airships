@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class AASA_DamageableActor;
 
 UCLASS(config=Game)
 class AAeroKingdom_AirshipsProjectile : public AActor
@@ -33,5 +34,11 @@ public:
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
 	/** Returns ProjectileMovement subobject **/
 	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+protected:
+	bool IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp);
+	bool HasDurability(AActor* OtherActor);
+
+	AASA_DamageableActor* GetDurabilityComponent(AActor* OtherActor);
 };
 

@@ -15,6 +15,8 @@ class UCameraComponent;
 class UArrowComponent;
 class UCapsuleComponent;
 class AASCannon;
+class UASAC_TurretTargetList;
+
 struct FInputActionValue;
 
 UCLASS()
@@ -39,6 +41,9 @@ class AEROKINGDOM_AIRSHIPS_API AASTurret : public AASInteractablePawn
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UCapsuleComponent* EnterCapsuleComponent;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UASAC_TurretTargetList* TargetList;
 
 	/** First person camera */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -129,6 +134,8 @@ public:
 
 	/** Called for Fire input */
 	void Fire();
+
+	UASAC_TurretTargetList* GetTargetList();
 
 protected:
 	/** FVector2D for Cannon Azimuth (Left/Right) Arc*/

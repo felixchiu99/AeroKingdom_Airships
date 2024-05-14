@@ -7,6 +7,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GIAirshipGameInstance.h"
+#include "ASDamageable/ASA_DamageableActor.h"
+#include "ASComponents/ASAC_DurabilityComponent.h"
+
 
 // Sets default values
 AAeroKingdom_Projectile::AAeroKingdom_Projectile()
@@ -48,11 +51,15 @@ AAeroKingdom_Projectile::AAeroKingdom_Projectile()
 void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+	if (IsValidObject(OtherActor, OtherComp))
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		if (OtherComp->IsSimulatingPhysics()) {
+			OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+		}
+		if (HasDurability(OtherActor)) {
+			AddDamage(OtherActor);
+		}
 
-		//Destroy();
 	}
 
 	OnHitExplode();
@@ -94,6 +101,40 @@ void AAeroKingdom_Projectile::PlayExplodeSound()
 		//UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetTransform().GetLocation(), fSFXVolume, 1.f, 0.0f, AudioSetting);
 		GetGameInstance<UGIAirshipGameInstance>()->SSPlaySFXAtLocation(this, ExplosionSound, GetActorLocation(), GetActorRotation(), 1.f, 1.f, 0.0f, AudioSetting);
 	}
+}
+
+bool AAeroKingdom_Projectile::IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp)
+{
+	return (OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr);
+}
+
+void AAeroKingdom_Projectile::AddDamage(AActor* OtherActor)
+{
+	AASA_DamageableActor* DamageableObj = GetDurabilityComponent(OtherActor);
+	DamageableObj->AddDamage(CalculateDamage());
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Damage " + FString::SanitizeFloat(CalculateDamage())));
+
+}
+
+bool AAeroKingdom_Projectile::HasDurability(AActor* OtherActor)
+{
+	AASA_DamageableActor* DamageableObj = GetDurabilityComponent(OtherActor);
+	return DamageableObj != nullptr;
+}
+
+AASA_DamageableActor* AAeroKingdom_Projectile::GetDurabilityComponent(AActor* OtherActor)
+{
+	UASAC_DurabilityComponent* DamageableComponent = Cast<UASAC_DurabilityComponent>(OtherActor->GetComponentByClass<UASAC_DurabilityComponent>());
+	if (!DamageableComponent) {
+		return nullptr;
+	}
+	AASA_DamageableActor* DamageableObj = Cast<AASA_DamageableActor>(DamageableComponent->GetOwner());
+	return DamageableObj;
+}
+
+float AAeroKingdom_Projectile::CalculateDamage()
+{
+	return fBaseDamage;
 }
 
 
