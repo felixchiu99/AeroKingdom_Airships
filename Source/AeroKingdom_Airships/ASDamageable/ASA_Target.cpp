@@ -38,7 +38,10 @@ void AASA_Target::SetWaypointComponent(UASAC_WaypointComponent* WPComponent)
 
 void AASA_Target::MoveToWaypoint()
 {
-	SetActorLocation(FMath::Lerp(GetActorLocation(), WaypointComponent->GetWaypointLocation(), GetWorld()->GetDeltaSeconds() * MoveSpeed));
+	//SetActorLocation(FMath::Lerp(GetActorLocation(), WaypointComponent->GetWaypointLocation(), GetWorld()->GetDeltaSeconds() * MoveSpeed));
+	FVector Direction = (WaypointComponent->GetWaypointLocation() - GetActorLocation());
+	Direction.Normalize();
+	SetActorLocation(GetActorLocation() + Direction * GetWorld()->GetDeltaSeconds() * MoveSpeed);
 	CheckArrivedWaypoint();
 }
 

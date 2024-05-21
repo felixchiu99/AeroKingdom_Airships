@@ -41,5 +41,5 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	float MoveSpeed = 1.0f;
+	float MoveSpeed = 250.0f;
 };
