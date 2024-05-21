@@ -59,35 +59,7 @@ AASTurret::AASTurret()
 	ExitPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ExitPoint"));
 	ExitPoint->SetupAttachment(CannonSupport);
 	ExitPoint->SetRelativeLocation(FVector(-50.f, -80.0f, -20.f));
-	/*
-	// Create a cannon Support for visualisation
-	CannonCarrier = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonCarrier"));
-	// set path for static mesh. Check path of mesh in content browser.
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Carrier(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_GunCarrier.5InchCannon_GunCarrier'"));
-	// check if path is valid. Check path of mesh in content browser.
-	if (Carrier.Succeeded())
-	{
-		// mesh = valid path
-		CannonCarrier->SetStaticMesh(Carrier.Object);
-	}
-	CannonCarrier->SetupAttachment(CannonPivot);
 
-	// Create a cannon Support for visualisation
-	CannonBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CannonBarrel"));
-	CannonBarrel->SetupAttachment(CannonCarrier);
-	// set path for static mesh. Check path of mesh in content browser.
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> Barrel(TEXT("/Script/Engine.StaticMesh'/Game/MyBlender/5InchCannon_Barrel.5InchCannon_Barrel'"));
-	// check if path is valid. Check path of mesh in content browser.
-	if (Barrel.Succeeded())
-	{
-		// mesh = valid path
-		CannonBarrel->SetStaticMesh(Barrel.Object);
-	}
-
-	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
-	FirePoint->SetupAttachment(CannonBarrel);
-	FirePoint->SetRelativeLocation(FVector(370.0f, 0.0f, 0.0f));
-	*/
 
 	//create a cannon sub actor
 	Cannon = CreateOptionalDefaultSubobject<UChildActorComponent>(TEXT("Cannon"));
@@ -111,7 +83,6 @@ AASTurret::AASTurret()
 void AASTurret::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -176,11 +147,19 @@ void AASTurret::UnClickFire(const FInputActionValue& Value)
 
 void AASTurret::StartFire()
 {
-	((AASCannon*)Cannon->GetChildActor())->StartFire();
+	AASCannon* CannonPointer = Cast<AASCannon>(Cannon->GetChildActor());
+	if (!CannonPointer) {
+		return;
+	}
+	CannonPointer->StartFire();
 }
 void AASTurret::StopFire()
 {
-	((AASCannon*)Cannon->GetChildActor())->StopFire();
+	AASCannon* CannonPointer = Cast<AASCannon>(Cannon->GetChildActor());
+	if (!CannonPointer) {
+		return;
+	}
+	CannonPointer->StopFire();
 }
 
 void AASTurret::Fire()
@@ -192,6 +171,84 @@ void AASTurret::Fire()
 UASAC_TurretTargetList* AASTurret::GetTargetList()
 {
 	return TargetList;
+}
+
+float AASTurret::GetProjectileInitialSpeed()
+{
+	AASCannon* CannonPointer = Cast<AASCannon>(Cannon->GetChildActor());
+	if (!CannonPointer) {
+		return 0;
+	}
+	return CannonPointer->GetProjectileInitialSpeed();
+}
+
+float AASTurret::GetCurrentElevationAngle()
+{
+	FVector Vector1 = CannonSupport->GetForwardVector();
+	FVector Vector2 = CannonPivot->GetForwardVector();
+	// Normalize the vectors
+	Vector1.Normalize();
+	Vector2.Normalize();
+
+	// Calculate the dot product
+	float DotProduct = FVector::DotProduct(Vector1, Vector2);
+
+	// Calculate the angle in radians
+	float AngleInRadians = FMath::Acos(DotProduct) * (Vector1.Z <= Vector2.Z ? 1 : -1);
+
+	return AngleInRadians;
+}
+
+float AASTurret::CalculateTurretElevation(FVector AimTarget)
+{
+	float DistX = AimTarget.X - CannonPivot->GetComponentLocation().X;
+	float DistY = AimTarget.Y - CannonPivot->GetComponentLocation().Y;
+
+	float Dist = FVector2d(DistX, DistY).Size();
+
+	float Gravity = 9.8;
+
+	float Velocity = GetProjectileInitialSpeed();
+
+	float Altitude = GetAltitudeDifference(AimTarget);
+
+	float SqrtTemp = FMath::Sqrt(
+		FMath::Pow(Velocity, 4)
+		- Gravity * (
+			Gravity * FMath::Pow(Dist, 2)
+			+
+			2 * Altitude * FMath::Pow(Velocity, 2)
+			)
+	);
+
+	float TempNegative = (FMath::Pow(Velocity, 2) - SqrtTemp) / (Gravity * Dist);
+
+	float LowAngle = FMath::Atan(TempNegative);
+
+	//flat Angle
+	if (!isnan(LowAngle)) {
+		return LowAngle + fAimDistanceModifier * Dist;
+	}
+;
+	return -10;
+}
+
+bool AASTurret::IsTargetInRange(FVector AimLocation)
+{
+	//Elevation
+	bool bElevationInRange = false;
+	float Elevation = CalculateTurretElevation(AimLocation);
+	if (FMath::RadiansToDegrees(Elevation) <= CannonElevation.Y && FMath::RadiansToDegrees(Elevation) >= CannonElevation.X) {
+		bElevationInRange = true;
+	}
+
+	//Azimuth
+	bool bAzimuthInRange = false;
+
+
+	bAzimuthInRange = true;
+
+	return bElevationInRange && bAzimuthInRange;
 }
 
 void AASTurret::RotateLeft()
@@ -240,6 +297,20 @@ FVector AASTurret::GetTargetVector(FVector TargetLocation)
 {
 
 	return TargetLocation - CannonPivot->GetComponentLocation();
+}
+
+float AASTurret::GetAltitudeDifference(FVector TargetLocation)
+{
+	//return TargetLocation.Z;
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Target Loc " + FString::SanitizeFloat(TargetLocation.Z)));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Target diff " + FString::SanitizeFloat(TargetLocation.Z - CannonPivot->GetComponentLocation().Z)));
+
+	return TargetLocation.Z - CannonPivot->GetComponentLocation().Z;
+}
+
+float AASTurret::GetProjectileVelocity(FVector TargetLocation)
+{
+	return 0.0f;
 }
 
 void AASTurret::MoveCharacter()

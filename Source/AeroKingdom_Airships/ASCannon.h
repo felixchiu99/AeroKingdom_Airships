@@ -72,6 +72,9 @@ public:
 	/* Called for stop auto shoot*/
 	void ResetCoolDown();
 
+	/* return the initial Speed of the projectile the cannon has*/
+	float GetProjectileInitialSpeed();
+
 protected:
 	/** Bool for whether there the cannons are shooting*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -83,4 +86,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	float fMuzzleAnimOffset = 30.f;
+
+	UPROPERTY(EditAnywhere, Category = "Cannon Attributes")
+	float fMaxRandomDegOffset = 0.0f;
 };

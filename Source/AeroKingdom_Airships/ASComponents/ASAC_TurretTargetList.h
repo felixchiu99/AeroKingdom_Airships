@@ -39,4 +39,7 @@ protected:
 
 	UPROPERTY()
 	TMap <AActor*, float> ScoredTargets;
+
+	UPROPERTY()
+	class AASTurret* OwnerTurret;
 };

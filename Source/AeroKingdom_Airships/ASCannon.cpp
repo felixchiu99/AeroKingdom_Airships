@@ -10,6 +10,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "GIAirshipGameInstance.h"
 
 // Sets default values
@@ -74,11 +75,20 @@ void AASCannon::Fire()
 			FActorSpawnParameters ActorSpawnParams;
 			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
+			FTransform FirePointVector = FirePoint->GetComponentTransform();
+
+			FVector FireDir = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(FirePoint->GetForwardVector(), fMaxRandomDegOffset);
+
+			FirePointVector.SetRotation(FireDir.ToOrientationQuat());
+
 			// Spawn the projectile at the muzzle
-			World->SpawnActor<AAeroKingdom_Projectile>(ProjectileClass, FirePoint->GetComponentTransform(), ActorSpawnParams);
+			AAeroKingdom_Projectile* Projectile = World->SpawnActor<AAeroKingdom_Projectile>(ProjectileClass, FirePointVector, ActorSpawnParams);
+			//Projectile->SetTurretPtr();
+
 
 			// Set Fire Timer
 			World->GetTimerManager().SetTimer(FireTimer, this, &AASCannon::ResetCoolDown, CoolDownTimer, false);
+
 			bOnCooldown = true;
 
 			// Try and play the niagara Animation
@@ -120,6 +130,15 @@ void AASCannon::ResetCoolDown()
 	bOnCooldown = false;
 	if (bIsFiring)
 		Fire();
+}
+
+float AASCannon::GetProjectileInitialSpeed()
+{
+	AAeroKingdom_Projectile* Projectile = Cast<AAeroKingdom_Projectile>(ProjectileClass->GetDefaultObject());
+	if (!Projectile) {
+		return 0;
+	}
+	return Projectile->GetProjectileMovementSpeed();
 }
 
 

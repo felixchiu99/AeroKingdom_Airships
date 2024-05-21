@@ -45,6 +45,9 @@ TArray<AASA_WaypointActor*> UASAC_WaypointComponent::GetWaypoints()
 
 AASA_WaypointActor* UASAC_WaypointComponent::GetWaypoint()
 {
+	if (Waypoints.Num() == 1) {
+		return Waypoints[0];
+	}
 	if (CurrentIndex < Waypoints.Num()) {
 		return Waypoints[CurrentIndex];
 	}
@@ -66,6 +69,9 @@ FVector3d UASAC_WaypointComponent::GetWaypointLocation()
 
 void UASAC_WaypointComponent::NextIndex()
 {
+	if (Waypoints.Num() == 1) {
+		return;
+	}
 	switch (Direction)
 	{
 
@@ -78,7 +84,7 @@ void UASAC_WaypointComponent::NextIndex()
 		}
 		break;
 	case TransverseDirection::PingPong:
-		if (CurrentIndex >= Waypoints.Num()) {
+		if (CurrentIndex >= Waypoints.Num()-1) {
 			bIsDecreasing = true;
 		}
 		if (CurrentIndex <= 0) {

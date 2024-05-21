@@ -26,7 +26,12 @@ class AEROKINGDOM_AIRSHIPS_API UASBTT_TurretAimBasic : public UBTTaskNode
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
 
 protected:
-	void RotateAzimuth(AASTurret* turret, FVector AimTarget, AAIController* Controller);
+	void RotateAzimuth(AASTurret* Turret, FVector AimTarget, AAIController* Controller);
 
-	void RotateElevation(AASTurret* turret, FVector AimTarget, AAIController* Controller);
+	void RotateElevation(AASTurret* Turret, FVector AimTarget, AAIController* Controller);
+
+	void RotateElevation(AASTurret* Turret, float Elevation, AAIController* Controller);
+
+protected:
+	bool bIsValidElevation = true;
 };

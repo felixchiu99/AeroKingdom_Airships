@@ -33,4 +33,12 @@ class AEROKINGDOM_AIRSHIPS_API UASBTS_TurretIsOnTarget : public UBTService
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector IsOnTargetElevationKey;
 
+	void AimTurret(class UBlackboardComponent* Blackboard, FVector AimTarget, class AASTurret* Turret);
+
+	void SaveTurretAngle(UBlackboardComponent* Blackboard, float Elevation, FQuat Rotation, class AASTurret* Turret);
+
+	bool CheckElevationOnTarget(float Elevation, AASTurret* Turret);
+
+protected:
+	bool bIsValidElevation = true;
 };

@@ -80,16 +80,6 @@ void UASAC_AISensesHandlerTurret::HandleSight(AActor* Actor, FAIStimulus Stimulu
 	}
 
 	Turret->GetTargetList()->AddTarget(Actor);
-	//AActor* TempTarget = Turret->GetTargetList()->GetCalulatedTarget();
-	/*
-	if(score){
-		change target
-	}
-	*/
-
-	//AiController->GetBlackboardComponent()->SetValueAsVector(AimTargetKey, FinalLocation);
-	//AiController->GetBlackboardComponent()->SetValueAsObject(TargetActorKey, TempTarget);
-
 }
 
 float UASAC_AISensesHandlerTurret::CalculateScore(IASI_Targetable* Target)

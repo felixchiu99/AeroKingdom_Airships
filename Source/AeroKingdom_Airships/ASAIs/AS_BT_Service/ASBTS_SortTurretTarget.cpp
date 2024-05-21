@@ -38,8 +38,6 @@ void UASBTS_SortTurretTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		return;
 	}
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("cal " + CalculatedTarget->GetActorLocation().ToCompactString()));
-
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(HasTargetKey.SelectedKeyName, true);
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(TargetActorKey.SelectedKeyName, CalculatedTarget);
 

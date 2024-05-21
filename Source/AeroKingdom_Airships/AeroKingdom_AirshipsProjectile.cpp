@@ -44,6 +44,11 @@ void AAeroKingdom_AirshipsProjectile::OnHit(UPrimitiveComponent* HitComp, AActor
 	}
 }
 
+float AAeroKingdom_AirshipsProjectile::GetProjectileMovementSpeed()
+{
+	return GetProjectileMovement()->InitialSpeed;
+}
+
 bool AAeroKingdom_AirshipsProjectile::IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp)
 {
 	return (OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr);

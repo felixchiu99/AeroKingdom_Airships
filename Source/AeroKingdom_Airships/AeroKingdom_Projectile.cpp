@@ -9,6 +9,7 @@
 #include "GIAirshipGameInstance.h"
 #include "ASDamageable/ASA_DamageableActor.h"
 #include "ASComponents/ASAC_DurabilityComponent.h"
+#include "ASTurret.h"
 
 
 // Sets default values
@@ -39,6 +40,16 @@ AAeroKingdom_Projectile::AAeroKingdom_Projectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
 
+}
+
+float AAeroKingdom_Projectile::GetProjectileMovementSpeed()
+{
+	return GetProjectileMovement()->InitialSpeed;
+}
+
+void AAeroKingdom_Projectile::BeginPlay()
+{
+	Super::BeginPlay();
 	// Die after 3 seconds by default
 	InitialLifeSpan = fExplodeTimer + 1;
 	UWorld* const World = GetWorld();
@@ -46,6 +57,11 @@ AAeroKingdom_Projectile::AAeroKingdom_Projectile()
 	{
 		World->GetTimerManager().SetTimer(ExplosionTimer, this, &AAeroKingdom_Projectile::OnExplode, fExplodeTimer, false);
 	}
+}
+
+void AAeroKingdom_Projectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -61,20 +77,23 @@ void AAeroKingdom_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 		}
 
 	}
-
 	OnHitExplode();
 }
 
 void AAeroKingdom_Projectile::OnExplode()
 {
 	PlayExplodeAnimation(ShellExplosion);
-	PlayExplodeSound();
-	Destroy();
+	OnDestroy();
 }
 
 void AAeroKingdom_Projectile::OnHitExplode()
 {
 	PlayExplodeAnimation(ShellOnHit);
+	OnDestroy();
+}
+
+void AAeroKingdom_Projectile::OnDestroy()
+{
 	PlayExplodeSound();
 	Destroy();
 }

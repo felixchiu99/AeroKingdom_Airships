@@ -71,7 +71,6 @@ class AEROKINGDOM_AIRSHIPS_API AASTurret : public AASInteractablePawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cannon", meta = (AllowPrivateAccess = "true", AllowedClasses = "Cannon"))
 	class UChildActorComponent* Cannon;
 
-
 public:
 	// Sets default values for this pawn's properties
 	AASTurret();
@@ -132,10 +131,38 @@ public:
 	/* return the Vector pointing to Target*/
 	FVector GetTargetVector(FVector TargetLocation);
 
+	/* return the difference in altitude between the target and the cannon*/
+	float GetAltitudeDifference(FVector TargetLocation);
+
+	/* return the Initial Speed of the projectile cannon*/
+	float GetProjectileVelocity(FVector TargetLocation);
+
 	/** Called for Fire input */
 	void Fire();
 
 	UASAC_TurretTargetList* GetTargetList();
+
+	/* return the initial Speed of the projectile the cannon has*/
+	float GetProjectileInitialSpeed();
+
+	/* return the current Elevation Angle of the cannnon*/
+	float GetCurrentElevationAngle();
+
+	/* return a Calculated Elevation based on the distance and target*/
+	float CalculateTurretElevation(FVector AimTarget);
+
+	/* return the ElevationAccuracyModifier of the cannnon*/
+	float GetElevationAccuracyModifier() { return fElevationAccuracyModifier; }
+
+	/* return the ElevationAccuracyModifier of the cannnon*/
+	float GetElevationSpeedModifier() { return fElevationSpeedModifier; }
+
+	/* Test if the Target would be in range of the turret's limits*/
+	bool IsTargetInRange(FVector AimLocation);
+
+	void SetElevationOffset(bool IsOver);
+
+	void ResetElevationOffset();
 
 protected:
 	/** FVector2D for Cannon Azimuth (Left/Right) Arc*/
@@ -165,4 +192,17 @@ protected:
 	/** bool for Attached cannon firing mode*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cannon Attributes", meta = (EditCondition = "bIsAutoFire", EditConditionHides))
 	bool bIsFiring = false;
+
+	/* AI Aimming Assist*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	float fElevationAccuracyModifier = 0.01f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	float fElevationSpeedModifier = 2.0f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	float fAzimuthAccuracyModifier = 0.005f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Cannon Attributes")
+	float fAimDistanceModifier = 0.00001f;
 };

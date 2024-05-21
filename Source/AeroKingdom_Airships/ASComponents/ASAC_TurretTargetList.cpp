@@ -2,6 +2,7 @@
 
 
 #include "ASAC_TurretTargetList.h"
+#include "../ASTurret.h"
 
 // Sets default values for this component's properties
 UASAC_TurretTargetList::UASAC_TurretTargetList()
@@ -19,7 +20,7 @@ void UASAC_TurretTargetList::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	OwnerTurret = Cast<AASTurret>(GetOwner());
 	
 }
 
@@ -69,8 +70,11 @@ void UASAC_TurretTargetList::CalculateTarget()
 	}
 	DelList.Empty();
 
+	if (ScoredTargets.IsEmpty()) {
+		return;
+	}
 	ScoredTargets.ValueSort([](float A, float B) {
-		return A < B; // sort keys in reverse
+		return A > B; // sort keys
 		}
 	);
 	CalculatedTarget = ScoredTargets.begin()->Key;
@@ -85,13 +89,32 @@ AActor* UASAC_TurretTargetList::GetCalulatedTarget()
 
 float UASAC_TurretTargetList::CalculateScore(AActor* Target)
 {
+	float fScore = 0;
 	if (Target) {
 		float fDist = FMath::FloorToInt(FVector::Dist(
 			GetOwner()->GetActorLocation(),
 			Target->GetActorLocation()
 		));
-		return fDist;
+
+		fScore -= fDist;
+
+		if (fDist < 1000) {
+			fScore += 10;
+		}
+		if (CalculatedTarget) {
+			if (Target == CalculatedTarget) {
+				fScore += 100;
+			}
+		}
+		if (!OwnerTurret->IsTargetInRange(Target->GetActorLocation())) {
+			fScore -= -10000;
+		}
+
+		
 	}
-	return -1;
+	else {
+		fScore = -1;
+	}
+	return fScore;
 }
 

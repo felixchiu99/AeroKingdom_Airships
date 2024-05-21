@@ -57,10 +57,20 @@ public:
 
 	/** Returns CollisionComp subobject **/
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
+
 	/** Returns ProjectileMovement subobject **/
 	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
+	/** Returns ProjectileMovement initial speed **/
+	float GetProjectileMovementSpeed();
+
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 	/** Pass Explosion On Explosion animation */
 	UFUNCTION()
 	void OnExplode();
@@ -68,6 +78,10 @@ protected:
 	/** Pass Explosion On Hit animation */
 	UFUNCTION()
 	void OnHitExplode();
+
+	/** Pass Explosion On Hit animation */
+	UFUNCTION()
+	void OnDestroy();
 
 	/** Play Explosion animation */
 	UFUNCTION()
@@ -101,4 +115,5 @@ protected:
 	//Base Damage to be Dealt
 	UPROPERTY(EditAnywhere)
 	float fBaseDamage = 10.0f;
+
 };

@@ -32,8 +32,12 @@ public:
 
 	/** Returns CollisionComp subobject **/
 	USphereComponent* GetCollisionComp() const { return CollisionComp; }
+
 	/** Returns ProjectileMovement subobject **/
 	UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+	/** Returns ProjectileMovement initial speed **/
+	float GetProjectileMovementSpeed();
 
 protected:
 	bool IsValidObject(AActor* OtherActor, UPrimitiveComponent* OtherComp);
