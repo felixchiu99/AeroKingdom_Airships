@@ -26,7 +26,18 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UASAC_WaypointComponent* GetCheckpointSystem();
+
+	void GenerateCheckpoint();
+
+	FVector CalculateNextCheckpoint(FVector V1, FVector V2);
+
 protected:
+	void DebugWaypoint(TArray<FVector> Checkpoints);
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Checkpoint")
+	UASAC_WaypointComponent* WaypointSystem;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Checkpoint")
 	UASAC_WaypointComponent* CheckpointSystem;
 };

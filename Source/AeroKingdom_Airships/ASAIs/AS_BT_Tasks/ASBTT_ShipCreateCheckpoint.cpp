@@ -19,19 +19,11 @@ EBTNodeResult::Type UASBTT_ShipCreateCheckpoint::ExecuteTask(UBehaviorTreeCompon
 
 void UASBTT_ShipCreateCheckpoint::CreateCheckpoint()
 {
-	AASAirship* Airship = Cast<AASAirship>(Blackboard->GetValueAsObject(ShipActorKey.SelectedKeyName));
-	if (!Airship) {
+	UASAC_AIShipWaypointSystem* ShipWaypointSystem = Cast<UASAC_AIShipWaypointSystem>(Blackboard->GetValueAsObject(AirshipWaypointSystemActorKey.SelectedKeyName));
+	if (!ShipWaypointSystem) {
 		return;
 	}
-	UASAC_AIShipWaypointSystem* ShipWaypoint = Cast<UASAC_AIShipWaypointSystem>(Airship->GetComponentByClass(UASAC_AIShipWaypointSystem::StaticClass()));
-	if (!ShipWaypoint) {
-		return;
-	}
-	UASAC_WaypointComponent* ShipCheckpoint = ShipWaypoint->GetCheckpointSystem();
-	if (!ShipCheckpoint) {
-		return;
-	}
-	FVector NextCheckpoint = ShipCheckpoint->GetWaypointLocation();
-	Blackboard->SetValueAsVector(CheckpointLocationKey.SelectedKeyName, NextCheckpoint);
-	Blackboard->SetValueAsBool(HasCheckpointKey.SelectedKeyName, true);
+	ShipWaypointSystem->GenerateCheckpoint();
+	Blackboard->SetValueAsBool(HasWaypointKey.SelectedKeyName, true);
 }
+

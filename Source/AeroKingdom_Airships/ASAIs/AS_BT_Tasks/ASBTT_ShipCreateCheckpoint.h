@@ -15,8 +15,10 @@ class AEROKINGDOM_AIRSHIPS_API UASBTT_ShipCreateCheckpoint : public UBTTaskNode
 	GENERATED_BODY()
 	
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
+
 protected:
 	void CreateCheckpoint();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	FBlackboardKeySelector SelfActorKey;
@@ -25,10 +27,11 @@ protected:
 	FBlackboardKeySelector ShipActorKey;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector CheckpointLocationKey;
+	FBlackboardKeySelector AirshipWaypointSystemActorKey;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	FBlackboardKeySelector HasCheckpointKey;
+	FBlackboardKeySelector HasWaypointKey;
+
 
 	UBlackboardComponent* Blackboard;
 };
