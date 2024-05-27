@@ -37,9 +37,9 @@ void UASBTS_TurretIsOnTarget::AimTurret(UBlackboardComponent* Blackboard, FVecto
 void UASBTS_TurretIsOnTarget::SaveTurretAngle(UBlackboardComponent* Blackboard, float Elevation, FQuat Rotation, AASTurret* Turret)
 {
 
-	float fRotationAccuracyModifier = 0.01f;
+	float fAzimuthAccuracyModifier = Turret->GetAzimuthAccuracyModifier();
 
-	bool IsOnTargetAzimuth = abs(Rotation.Z) < fRotationAccuracyModifier;
+	bool IsOnTargetAzimuth = abs(Rotation.Z) < fAzimuthAccuracyModifier;
 	bool IsOnTargetElevation = false;
 	if (!bIsValidElevation) {
 		IsOnTargetElevation = abs(Rotation.Y) < Turret->GetElevationAccuracyModifier();

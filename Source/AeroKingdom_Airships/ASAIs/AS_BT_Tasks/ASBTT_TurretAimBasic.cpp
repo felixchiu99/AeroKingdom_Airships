@@ -41,27 +41,34 @@ void UASBTT_TurretAimBasic::RotateAzimuth(AASTurret* Turret, FVector AimTarget, 
 {
 	FQuat rotation = FQuat::FindBetween(Turret->GetAimingVector(), Turret->GetTargetVector(AimTarget));
 
-	float fRotationSpeedModifier = 0.8f;
-	float fRotationAccuracyModifier = 0.005f;
+	float fRotationSpeedModifier = Turret->GetAzimuthSpeedModifier();
+	float fRotationAccuracyModifier = Turret->GetAzimuthAccuracyModifier();
 
-	float fAzimuthInput = fRotationSpeedModifier * rotation.Z > 0 ? 1 : -1;
+	float fAzimuthInput = fRotationSpeedModifier * rotation.Z;
+	Turret->RotateBase(fAzimuthInput);
+	/*
 	if (abs(rotation.Z) > fRotationAccuracyModifier) {
 		Turret->RotateBase(fAzimuthInput);
 	}
+	*/
 }
 
 void UASBTT_TurretAimBasic::RotateElevation(AASTurret* Turret, FVector AimTarget, AAIController* Controller)
 {
 	FQuat rotation = FQuat::FindBetween(Turret->GetAimingVector(), Turret->GetTargetVector(AimTarget));
 
-	float fRotationSpeedModifier = 0.05f;
+	float fRotationSpeedModifier = Turret->GetAzimuthSpeedModifier();
 	float fRotationAccuracyModifier = Turret->GetElevationAccuracyModifier();
 
-	float fElevationInput = fRotationSpeedModifier * (rotation.Y > 0 ? -1 : 1);
+	//float fElevationInput = fRotationSpeedModifier * (rotation.Y > 0 ? -1 : 1);
+	float fElevationInput = fRotationSpeedModifier * rotation.Y * fRotationSpeedModifier;
+	Turret->RotateElevation(fElevationInput);
+	/*
 	if (abs(rotation.Y) > fRotationAccuracyModifier) {
 		Turret->RotateElevation(fElevationInput);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Y " + FString::SanitizeFloat(rotation.Y)));
 	}
+	*/
 }
 
 void UASBTT_TurretAimBasic::RotateElevation(AASTurret* Turret, float Elevation, AAIController* Controller)
@@ -77,9 +84,11 @@ void UASBTT_TurretAimBasic::RotateElevation(AASTurret* Turret, float Elevation, 
 
 	//float fElevationInput = fRotationSpeedModifier * (AngleDiff > 0 ? 1 : -1);
 	float fElevationInput = fRotationSpeedModifier * AngleDiff;
-
+	Turret->RotateElevation(fElevationInput);
+	/*
 	if (abs(AngleDiff) > Turret->GetElevationAccuracyModifier()) {
 		Turret->RotateElevation(fElevationInput);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("ElevationInput " + FString::SanitizeFloat(fElevationInput)));
 	}
+	*/
 }

@@ -21,7 +21,7 @@ void UASAC_WaypointComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	InitWaypointVectorsFromActor();
 }
 
 
@@ -33,50 +33,68 @@ void UASAC_WaypointComponent::TickComponent(float DeltaTime, ELevelTick TickType
 	// ...
 }
 
-void UASAC_WaypointComponent::SetWaypoints(TArray<AASA_WaypointActor*> InWaypoints)
+void UASAC_WaypointComponent::SetWaypointActors(TArray<AASA_WaypointActor*> InWaypointActors)
 {
-	Waypoints = InWaypoints;
+	WaypointsActors = InWaypointActors;
+	InitWaypointVectorsFromActor();
 }
 
-TArray<AASA_WaypointActor*> UASAC_WaypointComponent::GetWaypoints()
+void UASAC_WaypointComponent::SetWaypoints(TArray<FVector> InWaypoints)
 {
-	return Waypoints;
+	EmptyWaypoints();
+	WaypointVectors = InWaypoints;
 }
 
-AASA_WaypointActor* UASAC_WaypointComponent::GetWaypoint()
+void UASAC_WaypointComponent::AddWaypoints(FVector InWaypoint)
 {
-	if (Waypoints.Num() == 1) {
-		return Waypoints[0];
+	WaypointVectors.Add(InWaypoint);
+}
+
+void UASAC_WaypointComponent::EmptyWaypoints()
+{
+	WaypointVectors.Empty();
+	CurrentIndex = 0;
+}
+
+
+TArray<FVector> UASAC_WaypointComponent::GetWaypoints()
+{
+	return WaypointVectors;
+}
+
+FVector UASAC_WaypointComponent::GetWaypoint()
+{
+	if (WaypointVectors.Num() == 1) {
+		return WaypointVectors[0];
 	}
-	if (CurrentIndex < Waypoints.Num()) {
-		return Waypoints[CurrentIndex];
+	if (CurrentIndex < WaypointVectors.Num()) {
+		return WaypointVectors[CurrentIndex];
 	}
 	else {
-		return nullptr;
+		return FVector(0);
 	}
-	
 }
 
-FVector3d UASAC_WaypointComponent::GetWaypointLocation()
+FVector UASAC_WaypointComponent::GetWaypointLocation()
 {
-	if (CurrentIndex < Waypoints.Num()) {
-		return Waypoints[CurrentIndex]->GetActorLocation();
+	if (CurrentIndex < WaypointVectors.Num()) {
+		return WaypointVectors[CurrentIndex];
 	}
 	else {
-		return FVector3d(0);
+		return FVector(0);
 	}
 }
 
 void UASAC_WaypointComponent::NextIndex()
 {
-	if (Waypoints.Num() == 1) {
+	if (WaypointVectors.Num() == 1) {
 		return;
 	}
 	switch (Direction)
 	{
 
 	case TransverseDirection::Loop:
-		if (CurrentIndex < Waypoints.Num()-1) {
+		if (CurrentIndex < WaypointVectors.Num()-1) {
 			CurrentIndex++;
 		}
 		else {
@@ -84,7 +102,7 @@ void UASAC_WaypointComponent::NextIndex()
 		}
 		break;
 	case TransverseDirection::PingPong:
-		if (CurrentIndex >= Waypoints.Num()-1) {
+		if (CurrentIndex >= WaypointVectors.Num()-1) {
 			bIsDecreasing = true;
 		}
 		if (CurrentIndex <= 0) {
@@ -98,12 +116,22 @@ void UASAC_WaypointComponent::NextIndex()
 		}
 		break;
 	case TransverseDirection::None:
-		if (CurrentIndex < Waypoints.Num()) {
+		if (CurrentIndex < WaypointVectors.Num()-1) {
 			CurrentIndex++;
 		}
 		break;
 	default:
 		break;
 	}
+}
+
+void UASAC_WaypointComponent::InitWaypointVectorsFromActor()
+{
+	EmptyWaypoints();
+	for (auto Waypoint : WaypointsActors) {
+		WaypointVectors.Add(Waypoint->GetActorLocation());
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("hi " + FString::SanitizeFloat(WaypointVectors.Num())));
+
 }
 

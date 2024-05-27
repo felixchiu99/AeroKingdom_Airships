@@ -23,7 +23,10 @@ class AEROKINGDOM_AIRSHIPS_API UASAC_WaypointComponent : public UActorComponent
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-	TArray<AASA_WaypointActor*> Waypoints;
+	TArray<AASA_WaypointActor*> WaypointsActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	TArray<FVector> WaypointVectors;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	TransverseDirection Direction{TransverseDirection::Loop };
@@ -40,14 +43,23 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void SetWaypoints(TArray<AASA_WaypointActor*> InWaypoints);
-	TArray<AASA_WaypointActor*> GetWaypoints();
+	void SetWaypointActors(TArray<AASA_WaypointActor*> InWaypointActors);
+	//TArray<AASA_WaypointActor*> GetWaypoints();
 
-	AASA_WaypointActor* GetWaypoint();
-	FVector3d GetWaypointLocation();
+	TArray<FVector> GetWaypoints();
+	void SetWaypoints(TArray<FVector> InWaypoints);
+	void AddWaypoints(FVector InWaypoint);
+	void EmptyWaypoints();
+
+	//AASA_WaypointActor* GetWaypoint();
+	FVector GetWaypoint();
+	FVector GetWaypointLocation();
 
 	void NextIndex();
-	
+
+protected:
+	void InitWaypointVectorsFromActor();
+
 protected:
 	int32 CurrentIndex = 0;
 

@@ -31,7 +31,7 @@ protected:
 
 	virtual void Lift(const FInputActionValue& Value);
 
-
+public:
 	/* Called for linking Airship Functions*/
 	virtual void ThrustAxis(float input);
 
@@ -39,7 +39,6 @@ protected:
 
 	virtual void UpAxis(float input);
 
-public:
 	void SetAirshipPointer(AASAirship* Airship);
 
 	// Called to bind functionality to input

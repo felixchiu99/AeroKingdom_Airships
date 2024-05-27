@@ -78,6 +78,7 @@ class AEROKINGDOM_AIRSHIPS_API AASAirship : public AASVehicle
 
 		FVector ApplyAbsAxis(FVector Axis);
 
+		float GetRudderTurnSpeed() { return fRudderTurnSpeed; }
 	protected:
 		
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LinearDamping")
