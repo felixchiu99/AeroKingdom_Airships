@@ -29,7 +29,7 @@ public:
 
 	void GenerateCheckpoint();
 
-	FVector CalculateNextCheckpoint(FVector V1, FVector V2);
+	FVector CalculateNextCheckpoint(FVector V1, FVector V2, FVector ForwardVector, float fShortestDistModifier);
 
 protected:
 	void DebugWaypoint(TArray<FVector> Checkpoints);
@@ -40,4 +40,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Checkpoint")
 	UASAC_WaypointComponent* CheckpointSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	float fShortestDistMod = 0.4f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
+	float fNearDist = 4000.0f;
+
+	float fDisplayTime = 20.0f;
 };

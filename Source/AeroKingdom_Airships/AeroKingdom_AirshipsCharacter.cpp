@@ -169,7 +169,6 @@ void AAeroKingdom_AirshipsCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
 	GetLookedAt();
-
 }
 
 void AAeroKingdom_AirshipsCharacter::Interact(const FInputActionValue& Value)

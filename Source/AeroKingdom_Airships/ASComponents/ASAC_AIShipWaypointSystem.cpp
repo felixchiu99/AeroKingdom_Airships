@@ -50,23 +50,57 @@ void UASAC_AIShipWaypointSystem::GenerateCheckpoint()
 	FVector NextWaypoint = WaypointSystem->GetWaypointLocation();
 	FVector CurrentLocation = GetOwner()->GetActorLocation();
 
-	FVector MidPoint = CalculateNextCheckpoint(CurrentLocation, NextWaypoint);
-	FVector Point1 = CalculateNextCheckpoint(CurrentLocation, MidPoint);
-	FVector Point3 = CalculateNextCheckpoint(MidPoint, NextWaypoint);
+	float length = (NextWaypoint - CurrentLocation).Length();
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("NextWaypoint : " + FString::SanitizeFloat(length)));
+
+	float fShortestDistModifier = fShortestDistMod;
+
+	if (length < fNearDist) {
+		fShortestDistModifier = 1.2f;
+	}
+
+	FVector MidPoint = CalculateNextCheckpoint(CurrentLocation, NextWaypoint, GetOwner()->GetActorForwardVector(), fShortestDistModifier);
 
 	TArray<FVector> Checkpoints;
 
-	Checkpoints.Add(Point1);
-	Checkpoints.Add(MidPoint);
-	Checkpoints.Add(Point3);
+	if (length < fNearDist) {
+		FVector direction = NextWaypoint - CurrentLocation;
+		direction.Normalize();
+		FVector Point1 = CalculateNextCheckpoint(CurrentLocation, MidPoint, -direction, 0.5f);
+		//Checkpoints.Add(Point1);
+		Checkpoints.Add(MidPoint);
+
+		FVector P3Direction = MidPoint - Point1;
+		P3Direction.Normalize();
+		FVector Point3 = CalculateNextCheckpoint(MidPoint, NextWaypoint, P3Direction, 1.5f);
+		Checkpoints.Add(Point3);
+	}
+	else {
+		FVector Point1 = CalculateNextCheckpoint(CurrentLocation, MidPoint, GetOwner()->GetActorForwardVector(), fShortestDistModifier);
+		FVector Point3 = CalculateNextCheckpoint(MidPoint, NextWaypoint, GetOwner()->GetActorForwardVector(), fShortestDistModifier);
+		Checkpoints.Add(Point1);
+		Checkpoints.Add(MidPoint);
+		Checkpoints.Add(Point3);
+	}
+
 	Checkpoints.Add(NextWaypoint);
 
 	CheckpointSystem->SetWaypoints(Checkpoints);
 
+	DrawDebugLine(
+		GetWorld(),
+		CurrentLocation,
+		CurrentLocation + FVector(0, 0, 500),
+		FColor(0, 255, 255),
+		false, fDisplayTime, 0,
+		12.333
+	);
+
 	DebugWaypoint(Checkpoints);
 }
 
-FVector UASAC_AIShipWaypointSystem::CalculateNextCheckpoint(FVector V1, FVector V2)
+FVector UASAC_AIShipWaypointSystem::CalculateNextCheckpoint(FVector V1, FVector V2, FVector ForwardVector, float fShortestDistModifier)
 {
 	FVector Result;
 	FVector MidPoint = FMath::Lerp(V1, V2, 0.5f);
@@ -78,7 +112,7 @@ FVector UASAC_AIShipWaypointSystem::CalculateNextCheckpoint(FVector V1, FVector 
 		ShortestDist = Temp;
 	}
 
-	ShortestDist *= 0.4f;
+	ShortestDist *= fShortestDistModifier;
 
 	FVector Normal = FVector::CrossProduct((V2 - V1) , FVector(0, 0, 1));
 	Normal.Normalize();
@@ -92,7 +126,6 @@ FVector UASAC_AIShipWaypointSystem::CalculateNextCheckpoint(FVector V1, FVector 
 	VectorToMid2.Normalize();
 	VectorToMid3.Normalize();
 
-	FVector ForwardVector = GetOwner()->GetActorForwardVector();
 	float Angle = FMath::Acos(FVector::DotProduct(VectorToMid2, ForwardVector ));
 
 	float Angle2 = FMath::Acos(FVector::DotProduct(VectorToMid3, ForwardVector ));
@@ -109,16 +142,18 @@ FVector UASAC_AIShipWaypointSystem::CalculateNextCheckpoint(FVector V1, FVector 
 
 void UASAC_AIShipWaypointSystem::DebugWaypoint(TArray<FVector> Checkpoints)
 {
-	float DisplayTime = 5.0f;
+	int temp = 0;
+
 	for (auto Checkpoint : Checkpoints) {
 		DrawDebugLine(
 			GetWorld(),
 			Checkpoint,
 			Checkpoint + FVector(0, 0, 500),
-			FColor(255, 0, 0),
-			false, DisplayTime, 0,
+			FColor(255, 50 * temp, 255/(temp+1)),
+			false, fDisplayTime, 0,
 			12.333
 		);
+		temp++;
 	}
 }
 
