@@ -48,27 +48,19 @@ void AASCharacterMimic::CalculateViewpoint()
 
 	FirstPersonCameraComponent->SetWorldLocation(mimicCamLocation);
 	const FRotator PawnViewRotation = Character->GetViewRotation();
-	if (!PawnViewRotation.Equals(referenceCamera->GetComponentRotation()))
+	if (!PawnViewRotation.Equals(FirstPersonCameraComponent->GetComponentRotation()))
 	{
 		FirstPersonCameraComponent->SetWorldRotation(PawnViewRotation);
 	}
 }
 
-void AASCharacterMimic::MimicTransform()
+void AASCharacterMimic::SetMimicCamTransform()
 {
 	if (Character == nullptr) return;
 	if (MimicReference == nullptr) return;
 	if (RealReference == nullptr) return;
 	UCameraComponent* referenceCamera = Character->GetFirstPersonCameraComponent();
-	FTransform referenceTransform = Character->GetTransform();
-	FVector relativeLocation = MimicReference->GetRelativeLocation(referenceTransform.GetLocation());
-	FVector mimicLocation = RealReference->GetActorLocation() + relativeLocation;
-
-	FTransform mimicTransform = referenceTransform;
-	mimicTransform.SetLocation(mimicLocation);
-
-	this->SetActorTransform(mimicTransform);
-
+	FirstPersonCameraComponent->SetWorldTransform(referenceCamera->GetComponentTransform());
 }
 
 void AASCharacterMimic::OnExitViewpoint()
@@ -84,21 +76,31 @@ void AASCharacterMimic::OnExitViewpoint()
 	FTransform cameraTransformMimic = FirstPersonCameraComponent->GetComponentTransform();
 	FVector relativeLocationMimic = RealReference->GetRelativeLocation(this->GetTransform().GetLocation());
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Relative" + relativeLocationReal.ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  Relative" + relativeLocationReal.ToCompactString());
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Relative" + relativeLocationMimic.ToCompactString());
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Cam Relative" + referenceCamera->GetRelativeLocation().ToCompactString());
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Cam Relative" + FirstPersonCameraComponent->GetRelativeLocation().ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  Cam Relative " + referenceCamera->GetComponentLocation().ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Cam Relative " + FirstPersonCameraComponent->GetComponentLocation().ToCompactString());
+
+	FVector realDiff = referenceCamera->GetComponentLocation() - Character->GetTransform().GetLocation();
+	FVector mimicDiff = FirstPersonCameraComponent->GetComponentLocation() - this->GetTransform().GetLocation();
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "cam pos " + FirstPersonCameraComponent->GetComponentLocation().ToCompactString());
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "bod pos " + this->GetTransform().GetLocation().ToCompactString());
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  diff " + realDiff.ToCompactString());
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic diff " + mimicDiff.ToCompactString());
+
 
 	FTransform referenceTransformMimic = Character->GetTransform();
 	FVector newLocationReal = RealReference->GetActorLocation() + relativeLocationMimic;
 	referenceTransformMimic.SetLocation(newLocationReal);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Temp Relative" + referenceTransformMimic.ToHumanReadableString());
-
 	Character->SetActorTransform(referenceTransformMimic);
 	Character->SetActorLocation(newLocationReal);
 
+	const FRotator PawnViewRotation = Character->GetViewRotation();
+	referenceCamera->SetWorldRotation(PawnViewRotation);
 }
 
 // Called every frame
@@ -113,8 +115,8 @@ void AASCharacterMimic::SetMimicCharacter(AAeroKingdom_AirshipsCharacter* parent
 {
 	Character = parent;
 	Controller = Cast<APlayerController>(Character->GetController());
-	UCameraComponent* referenceCamera = Character->GetFirstPersonCameraComponent();
-	FirstPersonCameraComponent->SetRelativeLocationAndRotation(referenceCamera->GetRelativeLocation(), referenceCamera->GetRelativeRotation());
+
+	FirstPersonCameraComponent->SetRelativeLocation(Character->GetFirstPersonCameraComponent()->GetRelativeLocation()); // Position the camera
 }
 
 void AASCharacterMimic::UnsetMimicCharacter()

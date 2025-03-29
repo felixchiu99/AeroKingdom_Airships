@@ -37,7 +37,7 @@ protected:
 
 	void CalculateViewpoint();
 
-	void MimicTransform();
+	void SetMimicCamTransform();
 
 	void OnExitViewpoint();
 
