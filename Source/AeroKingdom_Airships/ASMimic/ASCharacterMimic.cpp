@@ -31,8 +31,6 @@ void AASCharacterMimic::CalculateViewpoint()
 	if (MimicReference == nullptr) return;
 	if (RealReference == nullptr) return;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "tick");
-
 	FTransform referenceTransform = Character->GetTransform();
 	UCameraComponent* referenceCamera = Character->GetFirstPersonCameraComponent();
 
@@ -48,9 +46,12 @@ void AASCharacterMimic::CalculateViewpoint()
 	mimicTransform.SetLocation(mimicLocation);
 	this->SetActorTransform(mimicTransform);
 
-	FirstPersonCameraComponent->SetWorldTransform(cameraTransform);
 	FirstPersonCameraComponent->SetWorldLocation(mimicCamLocation);
-
+	const FRotator PawnViewRotation = Character->GetViewRotation();
+	if (!PawnViewRotation.Equals(referenceCamera->GetComponentRotation()))
+	{
+		FirstPersonCameraComponent->SetWorldRotation(PawnViewRotation);
+	}
 }
 
 void AASCharacterMimic::MimicTransform()
@@ -76,8 +77,6 @@ void AASCharacterMimic::OnExitViewpoint()
 	if (MimicReference == nullptr) return;
 	if (RealReference == nullptr) return;
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("OnExitViewpoint"));
-
 	UCameraComponent* referenceCamera = Character->GetFirstPersonCameraComponent();
 	FTransform cameraTransformReal = referenceCamera->GetComponentTransform();
 	FVector relativeLocationReal = MimicReference->GetRelativeLocation(Character->GetTransform().GetLocation());
@@ -85,11 +84,11 @@ void AASCharacterMimic::OnExitViewpoint()
 	FTransform cameraTransformMimic = FirstPersonCameraComponent->GetComponentTransform();
 	FVector relativeLocationMimic = RealReference->GetRelativeLocation(this->GetTransform().GetLocation());
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Relative" + relativeLocationReal.ToCompactString());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Relative" + relativeLocationMimic.ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Relative" + relativeLocationReal.ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Relative" + relativeLocationMimic.ToCompactString());
 	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Cam Relative" + referenceCamera->GetRelativeLocation().ToCompactString());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Cam Relative" + FirstPersonCameraComponent->GetRelativeLocation().ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real Cam Relative" + referenceCamera->GetRelativeLocation().ToCompactString());
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Cam Relative" + FirstPersonCameraComponent->GetRelativeLocation().ToCompactString());
 
 	FTransform referenceTransformMimic = Character->GetTransform();
 	FVector newLocationReal = RealReference->GetActorLocation() + relativeLocationMimic;
@@ -128,6 +127,7 @@ void AASCharacterMimic::SetMimicView()
 {
 	FViewTargetTransitionParams Params; 
 	Controller->SetViewTarget(this, Params);
+
 }
 
 void AASCharacterMimic::UnsetMimicView()
@@ -158,11 +158,20 @@ void AASCharacterMimic::SetRealReference(AASMimicBase* parent)
 	RealReference = parent;
 }
 
+void AASCharacterMimic::OnEnter(AAeroKingdom_AirshipsCharacter* character, AASMimicBase* mimicChild, AASMimicBase* mimicParent)
+{
+	SetMimicCharacter(character);
+	SetMimicReference(mimicChild);
+	SetRealReference(mimicParent);
+	CalculateViewpoint();
+	SetMimicView();
+}
+
 void AASCharacterMimic::OnExit()
 {
 	OnExitViewpoint();
-	UnsetMimicView();
 	UnsetMimicReference();
+	UnsetMimicView();
 	UnsetMimicCharacter();
 }
 

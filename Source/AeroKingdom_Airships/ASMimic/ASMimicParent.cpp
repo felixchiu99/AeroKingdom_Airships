@@ -49,10 +49,7 @@ void AASMimicParent::OnOverlapBeginPlayer(AActor* OtherActor)
 	if (player) {
 		FVector relativePosition = player->GetActorLocation() - this->GetActorLocation();
 		player->SetActorLocation(MimicChild->GetActorLocation() + relativePosition);
-		MimicCharacter->SetMimicCharacter(player);
-		MimicCharacter->SetMimicView();
-		MimicCharacter->SetMimicReference(MimicChild);
-		MimicCharacter->SetRealReference(this);
+		MimicCharacter->OnEnter(player, MimicChild, this);
 	}
 }
 

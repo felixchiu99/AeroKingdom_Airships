@@ -54,5 +54,6 @@ public:
 	void UnsetMimicReference();
 	void SetRealReference(AASMimicBase* parent);
 
+	void OnEnter(AAeroKingdom_AirshipsCharacter* character, AASMimicBase* mimicChild, AASMimicBase* mimicParent);
 	void OnExit();
 };
