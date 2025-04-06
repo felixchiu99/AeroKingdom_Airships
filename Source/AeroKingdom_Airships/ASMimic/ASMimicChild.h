@@ -17,6 +17,8 @@ class AEROKINGDOM_AIRSHIPS_API AASMimicChild : public AASMimicBase
 	AASMimicParent* MimicParent;
 
 	bool hasChar = false;
+
+
 public:	
 	// Sets default values for this actor's properties
 	AASMimicChild();

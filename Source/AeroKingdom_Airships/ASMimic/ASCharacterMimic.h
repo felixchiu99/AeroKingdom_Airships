@@ -7,6 +7,7 @@
 #include "ASCharacterMimic.generated.h"
 
 class UCameraComponent;
+class UArrowComponent;
 class AASMimicBase;
 class AAeroKingdom_AirshipsCharacter;
 
@@ -19,6 +20,10 @@ class AEROKINGDOM_AIRSHIPS_API AASCharacterMimic : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UArrowComponent* RootArrow;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AAeroKingdom_AirshipsCharacter* Character;
 
 	APlayerController* Controller;

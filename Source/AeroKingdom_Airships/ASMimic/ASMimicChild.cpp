@@ -23,7 +23,7 @@ void AASMimicChild::BeginPlay()
 
 void AASMimicChild::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("in child"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("in child"));
 }
 
 void AASMimicChild::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -37,7 +37,7 @@ void AASMimicChild::OnOverlapEndPlayer(AActor* OtherActor)
 {
 	AAeroKingdom_AirshipsCharacter* player = Cast<AAeroKingdom_AirshipsCharacter>(OtherActor);
 	if (player) {
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("out child player"));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("out child player"));
 		// FVector relativePosition = player->GetActorLocation() - this->GetActorLocation();
 		// player->SetActorLocation(MimicParent->GetActorLocation() + relativePosition);
 		MimicParent->ChildExcaped();

@@ -44,7 +44,7 @@ void AASMimicParent::OnOverlapBeginPlayer(AActor* OtherActor)
 {
 	if (MimicChild->HasChild())
 		return;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("in Parent"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("in Parent"));
 	AAeroKingdom_AirshipsCharacter* player = Cast<AAeroKingdom_AirshipsCharacter>(OtherActor);
 	if (player) {
 		FVector relativePosition = player->GetActorLocation() - this->GetActorLocation();

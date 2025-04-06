@@ -2,6 +2,7 @@
 
 
 #include "ASCharacterMimic.h"
+#include "Components/ArrowComponent.h"
 #include "Camera/CameraComponent.h"
 #include "ASMimicBase.h"
 #include "../AeroKingdom_AirshipsCharacter.h"
@@ -11,11 +12,16 @@ AASCharacterMimic::AASCharacterMimic()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	RootArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("RootArrow"));
+	RootArrow->SetupAttachment(RootComponent);
+
 	// Create a CameraComponent	
 
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->SetupAttachment(RootComponent);
+	FirstPersonCameraComponent->SetupAttachment(RootArrow);
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+
 }
 
 // Called when the game starts or when spawned
@@ -76,21 +82,8 @@ void AASCharacterMimic::OnExitViewpoint()
 	FTransform cameraTransformMimic = FirstPersonCameraComponent->GetComponentTransform();
 	FVector relativeLocationMimic = RealReference->GetRelativeLocation(this->GetTransform().GetLocation());
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  Relative" + relativeLocationReal.ToCompactString());
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Relative" + relativeLocationMimic.ToCompactString());
-	
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  Cam Relative " + referenceCamera->GetComponentLocation().ToCompactString());
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic Cam Relative " + FirstPersonCameraComponent->GetComponentLocation().ToCompactString());
-
 	FVector realDiff = referenceCamera->GetComponentLocation() - Character->GetTransform().GetLocation();
 	FVector mimicDiff = FirstPersonCameraComponent->GetComponentLocation() - this->GetTransform().GetLocation();
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "cam pos " + FirstPersonCameraComponent->GetComponentLocation().ToCompactString());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "bod pos " + this->GetTransform().GetLocation().ToCompactString());
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Real  diff " + realDiff.ToCompactString());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Mimic diff " + mimicDiff.ToCompactString());
-
 
 	FTransform referenceTransformMimic = Character->GetTransform();
 	FVector newLocationReal = RealReference->GetActorLocation() + relativeLocationMimic;
@@ -101,6 +94,7 @@ void AASCharacterMimic::OnExitViewpoint()
 
 	const FRotator PawnViewRotation = Character->GetViewRotation();
 	referenceCamera->SetWorldRotation(PawnViewRotation);
+
 }
 
 // Called every frame
@@ -167,6 +161,7 @@ void AASCharacterMimic::OnEnter(AAeroKingdom_AirshipsCharacter* character, AASMi
 	SetRealReference(mimicParent);
 	CalculateViewpoint();
 	SetMimicView();
+	this->SetActorHiddenInGame(false);
 }
 
 void AASCharacterMimic::OnExit()
@@ -175,5 +170,6 @@ void AASCharacterMimic::OnExit()
 	UnsetMimicReference();
 	UnsetMimicView();
 	UnsetMimicCharacter();
+	this->SetActorHiddenInGame(true);
 }
 
